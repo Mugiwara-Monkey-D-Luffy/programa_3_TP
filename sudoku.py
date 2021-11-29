@@ -161,12 +161,17 @@ bandera_numeros=1
 bandera_letras=0
 bandera_simbolos=0
 bandera_pasa_configuracion=0
+
+gane=1
 bandera_boton_picado=0
 bandera_inicio_juego=0
 elemento_agregar=0
 partida=0
 elementos_fijos=[]
-
+hr=0
+mn=0
+sg=0
+w=0
 def nombre():
      """
      Funcionalidad: Valida que el nombre tenga entre 1 y 30 caracteres.
@@ -188,34 +193,41 @@ def activa_reloj():
      Restricciones: El usuario en la configuración tuvo que haber seleccionado la opción en la configuración.
      Salidas: Crea el reloj y lo pone en la ventana de juego.
      """
-     global horas_
-     global minutos_
-     global segundos_
-     global bandera_gane
+     global horas
+     global minutos
+     global segundos
+     global ventana_para_reloj
+     global hr
+     global mn
+     global sg
+     #global bandera_gane
      global reloj_time
-     global pares
-     segundos_+=1
-     if segundos_==60:
-          minutos_+=1
-          segundos_=0
-     if minutos_==60:
-          horas_+=1
-          minutos_=0
+     #global pares
+     sg+=1
+     if sg==60:
+          mn+=1
+          sg=0
+     if mn==60:
+          hr+=1
+          mn=0
+     x="0"
      #ptop10=horas_+":"+minutos_+":"+segundos_
-     hours=f"{horas_}" if horas_>9 else f"0{horas_}"
-     minutes=f"{minutos_}" if minutos_>9 else f"0{minutos_}"
-     seconds=f"{segundos_}" if segundos_>9 else f"0{segundos_}"
-      
-     relojito=tk.Label(ventana1,text=hours+"              :              "+minutes+"              :              "+seconds,bg="azure",width=41,font=("Arial Black",10))
-     relojito.grid(row=9,column=2)
-     if bandera_gane==1:
-          relojito.after_cancel(reloj_time)
-          showMessage("¡Gananaste!"," FELICIDADES")
-          ventana1.destroy()
-          pares=[]
-          bandera_gane=0
-          jugar()
-     reloj_time=x.after(1000,activa_reloj)
+     hours=f"{hr}" if hr>9 else f"0{hr}"
+     minutes=f"{mn}" if mn>9 else f"0{mn}"
+     seconds=f"{sg}" if sg>9 else f"0{sg}"
+     horas.config(text=hours)
+     minutos.config(text=minutes)
+     segundos.config(text=seconds)
+     #relojito=tk.Label(ventana1,text=hours+"              :              "+minutes+"              :              "+seconds,bg="azure",width=41,font=("Arial Black",10))
+     #relojito.grid(row=9,column=2)
+##     if bandera_gane==1:
+##          relojito.after_cancel(reloj_time)
+##          showMessage("¡Gananaste!"," FELICIDADES")
+##          ventana1.destroy()
+##          pares=[]
+##          bandera_gane=0
+##          jugar()
+     reloj_time=horas.after(1000,activa_reloj)
 
 def activa_timer():
      """
@@ -509,7 +521,6 @@ def inicio_f():
      global bandera_nivel_dificil
      global partida
      global iniciar_juego
-     #global matriz_botones
      global matriz_botones_2
      global tablero_g
      global bandera_simbolos
@@ -579,12 +590,22 @@ def inicio_f():
                          matriz_botones_2[indice][indice1][0].config(text=partida[indice][indice1])
                          matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],partida[indice][indice1])
                     elementos_fijos.append(matriz_botones_2[indice][indice1][0])
+     if bandera_timer==1:
+          activa_timer()
+     else:
+          activa_reloj()
 def asigna_valor(x,y):
      global matriz_botones
      global matriz_botones_2
      global elemento_agregar
+     global jugar_v
+     global gane
+     global w
+     global bandera_boton_picado
+     bandera_validacion=0
      if matriz_botones[x][y] in elementos_fijos:
-          messagebox.showinfo("Error"," Jugada no es valida porque este es un elemento fijo")
+          bandera_validacion=1
+          messagebox.showinfo("Error"," Jugada no es valida porque \n este es un elemento fijo")
      i=x
      j=y
      if x>=8:
@@ -596,60 +617,80 @@ def asigna_valor(x,y):
      elif y>=4:
           j=y-1
      #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA FILA
-     for indice,boton in enumerate(matriz_botones_2[i]):
-          if boton[1]==str(elemento_agregar):
-               boton[0].config(bg="red")
-               messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la fila")
-               boton[0].config(bg="lavender")
+     if bandera_validacion==0:
+          for indice,boton in enumerate(matriz_botones_2[i]):
+               if boton[1]==str(elemento_agregar):
+                    boton[0].config(bg="red")
+                    messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la fila")
+                    boton[0].config(bg="lavender")
+                    bandera_validacion=1
      #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA COLUMNA
-     for indice,boton in enumerate(matriz_botones_2):
-          if boton[j][1]==str(elemento_agregar):
-               boton[j][0].config(bg="red")
-               messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la columna")
-               boton[j][0].config(bg="lavender")
+     if bandera_validacion==0:
+          for indice,boton in enumerate(matriz_botones_2):
+               if boton[j][1]==str(elemento_agregar):
+                    boton[j][0].config(bg="red")
+                    messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la columna")
+                    boton[j][0].config(bg="lavender")
+                    bandera_validacion=1
      #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA CUADRÍCULA
-     cuadricula_1=[matriz_botones_2[0][0],matriz_botones_2[0][1],matriz_botones_2[0][2],matriz_botones_2[1][0],matriz_botones_2[1][1],matriz_botones_2[1][2],matriz_botones_2[2][0],matriz_botones_2[2][1],matriz_botones_2[2][2]]
-     cuadricula_2=[matriz_botones_2[0][3],matriz_botones_2[0][4],matriz_botones_2[0][5],matriz_botones_2[1][3],matriz_botones_2[1][4],matriz_botones_2[1][5],matriz_botones_2[2][3],matriz_botones_2[2][4],matriz_botones_2[2][5]]
-     cuadricula_3=[matriz_botones_2[0][6],matriz_botones_2[0][7],matriz_botones_2[0][8],matriz_botones_2[1][6],matriz_botones_2[1][7],matriz_botones_2[1][8],matriz_botones_2[2][6],matriz_botones_2[2][7],matriz_botones_2[2][8]]
-     cuadricula_4=[matriz_botones_2[3][0],matriz_botones_2[3][1],matriz_botones_2[3][2],matriz_botones_2[4][0],matriz_botones_2[4][1],matriz_botones_2[4][2],matriz_botones_2[5][0],matriz_botones_2[5][1],matriz_botones_2[5][2]]
-     cuadricula_5=[matriz_botones_2[3][3],matriz_botones_2[3][4],matriz_botones_2[3][5],matriz_botones_2[4][3],matriz_botones_2[4][4],matriz_botones_2[4][5],matriz_botones_2[5][3],matriz_botones_2[5][4],matriz_botones_2[5][5]]
-     cuadricula_6=[matriz_botones_2[3][6],matriz_botones_2[3][7],matriz_botones_2[3][8],matriz_botones_2[4][6],matriz_botones_2[4][7],matriz_botones_2[4][8],matriz_botones_2[5][6],matriz_botones_2[5][7],matriz_botones_2[5][8]]
-     cuadricula_7=[matriz_botones_2[6][0],matriz_botones_2[6][1],matriz_botones_2[6][2],matriz_botones_2[7][0],matriz_botones_2[7][1],matriz_botones_2[7][2],matriz_botones_2[8][0],matriz_botones_2[8][1],matriz_botones_2[8][2]]
-     cuadricula_8=[matriz_botones_2[6][3],matriz_botones_2[6][4],matriz_botones_2[6][5],matriz_botones_2[7][3],matriz_botones_2[7][4],matriz_botones_2[7][5],matriz_botones_2[8][3],matriz_botones_2[8][4],matriz_botones_2[8][5]]
-     cuadricula_9=[matriz_botones_2[6][6],matriz_botones_2[6][7],matriz_botones_2[6][8],matriz_botones_2[7][6],matriz_botones_2[7][7],matriz_botones_2[7][8],matriz_botones_2[8][6],matriz_botones_2[8][7],matriz_botones_2[8][8]]
-     x=0
-     def auxiliar_error(boton):
-          global matriz_botones
-          boton.config(bg="red")
-          messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la cudrícula")
-          boton.config(bg="lavender")
-     def recorre_cuadricula(c,x):
-          for boton in c:
-               if boton[0]==matriz_botones[x][y]:
-                    x=1
-                    auxiliar_error(boton[0])
-     if x==0:
-          recorre_cuadricula(cuadricula_1,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_2,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_3,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_4,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_5,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_6,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_7,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_8,x)
-     if x==0:
-          recorre_cuadricula(cuadricula_9,x)
-     if x==0:
-          if elemento_agregar!=0:
-               matriz_botones[x][y].config(text=str(elemento_agregar))
-               matriz_botones_2[i][j]=(matriz_botones_2[i][j][0],str(elemento_agregar))
+     if bandera_validacion==0:
+          cuadricula_1=[matriz_botones_2[0][0],matriz_botones_2[0][1],matriz_botones_2[0][2],matriz_botones_2[1][0],matriz_botones_2[1][1],matriz_botones_2[1][2],matriz_botones_2[2][0],matriz_botones_2[2][1],matriz_botones_2[2][2]]
+          cuadricula_2=[matriz_botones_2[0][3],matriz_botones_2[0][4],matriz_botones_2[0][5],matriz_botones_2[1][3],matriz_botones_2[1][4],matriz_botones_2[1][5],matriz_botones_2[2][3],matriz_botones_2[2][4],matriz_botones_2[2][5]]
+          cuadricula_3=[matriz_botones_2[0][6],matriz_botones_2[0][7],matriz_botones_2[0][8],matriz_botones_2[1][6],matriz_botones_2[1][7],matriz_botones_2[1][8],matriz_botones_2[2][6],matriz_botones_2[2][7],matriz_botones_2[2][8]]
+          cuadricula_4=[matriz_botones_2[3][0],matriz_botones_2[3][1],matriz_botones_2[3][2],matriz_botones_2[4][0],matriz_botones_2[4][1],matriz_botones_2[4][2],matriz_botones_2[5][0],matriz_botones_2[5][1],matriz_botones_2[5][2]]
+          cuadricula_5=[matriz_botones_2[3][3],matriz_botones_2[3][4],matriz_botones_2[3][5],matriz_botones_2[4][3],matriz_botones_2[4][4],matriz_botones_2[4][5],matriz_botones_2[5][3],matriz_botones_2[5][4],matriz_botones_2[5][5]]
+          cuadricula_6=[matriz_botones_2[3][6],matriz_botones_2[3][7],matriz_botones_2[3][8],matriz_botones_2[4][6],matriz_botones_2[4][7],matriz_botones_2[4][8],matriz_botones_2[5][6],matriz_botones_2[5][7],matriz_botones_2[5][8]]
+          cuadricula_7=[matriz_botones_2[6][0],matriz_botones_2[6][1],matriz_botones_2[6][2],matriz_botones_2[7][0],matriz_botones_2[7][1],matriz_botones_2[7][2],matriz_botones_2[8][0],matriz_botones_2[8][1],matriz_botones_2[8][2]]
+          cuadricula_8=[matriz_botones_2[6][3],matriz_botones_2[6][4],matriz_botones_2[6][5],matriz_botones_2[7][3],matriz_botones_2[7][4],matriz_botones_2[7][5],matriz_botones_2[8][3],matriz_botones_2[8][4],matriz_botones_2[8][5]]
+          cuadricula_9=[matriz_botones_2[6][6],matriz_botones_2[6][7],matriz_botones_2[6][8],matriz_botones_2[7][6],matriz_botones_2[7][7],matriz_botones_2[7][8],matriz_botones_2[8][6],matriz_botones_2[8][7],matriz_botones_2[8][8]]
+          def auxiliar_error(boton):
+               global matriz_botones
+               boton.config(bg="red")
+               messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la cudrícula")
+               boton.config(bg="lavender")
+          def recorre_cuadricula(c):
+               global w
+               for boton in c:
+                    if boton[1]==str(elemento_agregar):
+                         w=1
+                         auxiliar_error(boton[0])
+          if w==0 and x<3 and y<3:
+               recorre_cuadricula(cuadricula_1)
+          elif w==0 and x<3 and y<7 and y>3:
+               recorre_cuadricula(cuadricula_2)
+          elif w==0 and x<3 and y>7:
+               recorre_cuadricula(cuadricula_3)
+          elif w==0 and x<7 and x>3 and y<3:
+               recorre_cuadricula(cuadricula_4)
+          elif w==0 and x<7 and x>3 and y<7 and y>3:
+               recorre_cuadricula(cuadricula_5)
+          elif w==0 and x<7 and x>3 and y>7:
+               recorre_cuadricula(cuadricula_6)
+          elif w==0 and x>7 and y<3:
+               recorre_cuadricula(cuadricula_7)
+          elif w==0 and x>7 and y<7 and y>3:
+               recorre_cuadricula(cuadricula_8)
+          elif w==0 and x>7 and y>7:
+               recorre_cuadricula(cuadricula_9)
+          if elemento_agregar==0:
+               messagebox.showinfo("ERROR"," Falta seleccionar un elemento")
+          else:
+               if w==0:
+                    matriz_botones[x][y].config(text=str(elemento_agregar))
+                    matriz_botones_2[i][j]=(matriz_botones_2[i][j][0],str(elemento_agregar))
+                    elemento_agregar=0
+                    bandera_boton_picado.config(bg="turquoise")
+                    for fila in  matriz_botones_2:
+                         for boton in fila:
+                              if boton[1]=="":
+                                   gane=0
+                    if gane==1:
+                         gane=2
+                         messagebox.showinfo("Gane"," ¡EXELENTE! \n JUEGO COMPLETADO")
+                         #llama a función para top x**************************************
+                         jugar_v.destroy()
+                         jugar_f()
+     w=0
      return x,y
 
 #JUGAR:
@@ -677,7 +718,30 @@ def jugar_f():
      global matriz_botones
      global matriz_botones_2
      global tablero_g
-     menu_p.destroy()
+     global horas
+     global minutos
+     global segundos
+     global jugar_v
+     global gane
+     global bandera_inicio_juego
+     global elemento_agregar
+     global partida
+     global hr
+     global mn
+     global sg
+     if gane!=2:
+          menu_p.destroy()
+     if gane==2:
+          #jugar_v.destroy()
+          gane=1
+          bandera_boton_picado=0
+          bandera_inicio_juego=0
+          elemento_agregar=0
+          partida=0
+          elementos_fijos=[]
+          hr=0
+          mn=0
+          sg=0
      jugar_v=tk.Tk()
      jugar_v.iconbitmap("x.ico")
      jugar_v.title("SUDOKU")
@@ -763,12 +827,12 @@ def jugar_f():
           none.grid(row=1,column=1)
           none=tk.Label(ventana_para_reloj,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
           none.grid(row=1,column=2)
-          none=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
-          none.grid(row=2,column=0)
-          none=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
-          none.grid(row=2,column=1)
-          none=tk.Label(ventana_para_reloj,text="              00            ",font=("Arial Black",10),bg="azure",width=13)
-          none.grid(row=2,column=2)
+          horas=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
+          horas.grid(row=2,column=0)
+          minutos=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
+          minutos.grid(row=2,column=1)
+          segundos=tk.Label(ventana_para_reloj,text="              00            ",font=("Arial Black",10),bg="azure",width=13)
+          segundos.grid(row=2,column=2)
           ventana_para_reloj.grid(row=4,column=2)
      #TIMER:
      if bandera_timer==1:
