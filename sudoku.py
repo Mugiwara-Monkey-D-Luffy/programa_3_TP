@@ -7,99 +7,165 @@
 #IMPORTACIÓN DE LIBRERÍAS:
 import tkinter as tk
 from tkinter import messagebox
-import random
+from random import randint
 from datetime import datetime
 import subprocess
+from functools import partial
 
 #VARIABLES:
 path="Manual de usuario.pdf" #AYUDA
-partidas_predefinidas_faciles={1:[["5","3","","","7","","","",""],
-                                  ["6","","","1","9","5","","",""],
-                                  ["","9","8","","","","","6",""],
-                                  ["8","","","","6","","","","3"],
-                                  ["4","","","8","","3","","","1"],
-                                  ["7","","","","2","","","","6"],
-                                  ["","6","","","","","2","8",""],
-                                  ["","","","4","1","9","","","5"],
-                                  ["","","","","8","","","7","9"]],
-                               2:[["","","","A","","","C","",""],
-                                  ["D","F","","","I","G","","",""],
-                                  ["A","","I","","","","","F",""],
-                                  ["","G","","","","","","C","H"],
-                                  ["I","","H","G","C","E","","B","F"],
-                                  ["B","C","D","F","","I","","E","A"],
-                                  ["","","B","","A","C","F","",""],
-                                  ["","D","","","","","","I",""],
-                                  ["","","","I","","H","B","G",""]],
-                               3:[["","-","%","","","*","","&",""],
-                                  ["*","","+","-","&","#","","","/"],
-                                  ["","#","","°","","","","*","+"],
-                                  ["","+","-","","#","","/","","*"],
-                                  ["","","/","+","$","","","-","°"],
-                                  ["°","","#","/","","","&","",""],
-                                  ["","&","","#","","+","%","","$"],
-                                  ["","","°","*","","","","",""],
-                                  ["+","","","&","/","","","",""]]}
-partidas_predefinidas_medias={1:[["3","","","","","","","2",""],
-                                  ["","8","","4","3","2","","1",""],
-                                  ["","5","","","","","6","",""],
-                                  ["","7","4","8","6","","","",""],
-                                  ["","3","","1","","","7","",""],
-                                  ["","","","2","9","6","8","7","1"],
-                                  ["6","","","","","","3","4",""],
-                                  ["","","","4","1","9","","","5"],
-                                  ["1","9","","7","","","","","6"]],
-                               2:[["","","G","D","A","E","","",""],
-                                  ["","","","","","","G","","E"],
-                                  ["D","I","B","","","C","H","","E"],
-                                  ["","B","","","","","","D",""],
-                                  ["","","D","","","F","A","",""],
-                                  ["A","","I","","","","","G","C"],
-                                  ["","","","","G","","","","A"],
-                                  ["","","","H","","","","","I"],
-                                  ["F","","A","E","D","","","","G"]],
-                               3:[["","","-","/","","&","+","","%"],
-                                  ["","","*","","","","","","/"],
-                                  ["","","+","","°","","","-",""],
-                                  ["*","","","","","-","%","",""],
-                                  ["","","%","","","","-","/",""],
-                                  ["$","","","%","","","","","#"],
-                                  ["%","","","","","","$","","*"],
-                                  ["","°","#","+","*","","/","",""],
-                                  ["/","","","","","°","#","",""]]}
-partidas_predefinidas_dificiles={1:[["","","","","4","","6","1",""],
-                                  ["6","","","","","","","",""],
-                                  ["5","","1","","","2","","8","4"],
-                                  ["","9","","","","7","","","2"],
-                                  ["","","","","8","","","",""],
-                                  ["2","1","","3","","6","7","",""],
-                                  ["1","","5","","6","3","4","",""],
-                                  ["9","6","","","1","5","","",""],
-                                  ["3","","","","","","","",""]],
-                               2:[["","","E","","","","","",""],
-                                  ["","F","B","","","","","C",""],
-                                  ["C","G","","","B","","","",""],
-                                  ["","","","B","","","","",""],
-                                  ["","A","H","","I","","E","","D"],
-                                  ["D","","F","","","","","H",""],
-                                  ["","C","","F","","","","I",""],
-                                  ["","","","","","","","B",""],
-                                  ["","","G","E","","I","C","F",""]],
-                               3:[["","&","","$","","*","/","",""],
-                                  ["","","","°","","/","","",""],
-                                  ["","%","/","","&","","*","",""],
-                                  ["","","","","","","","/","$"],
-                                  ["","","/","+","$","","","-","°"],
-                                  ["","","*","","#","°","","","-"],
-                                  ["","&","","#","","+","%","","$"],
-                                  ["#","","","","","","%","*",""],
-                                  ["","+","","","*","","","$",""]]}
+##partidas_predefinidas_faciles={1:[["5","3","","","7","","","",""],
+##                                  ["6","","","1","9","5","","",""],
+##                                  ["","9","8","","","","","6",""],
+##                                  ["8","","","","6","","","","3"],
+##                                  ["4","","","8","","3","","","1"],
+##                                  ["7","","","","2","","","","6"],
+##                                  ["","6","","","","","2","8",""],
+##                                  ["","","","4","1","9","","","5"],
+##                                  ["","","","","8","","","7","9"]],
+##                               2:[["","","","1","","","3","",""],
+##                                  ["4","6","","","9","7","","",""],
+##                                  ["1","","9","","","","","6",""],
+##                                  ["","7","","","","","","3","8"],
+##                                  ["9","","8","7","3","5","","2","6"],
+##                                  ["2","3","4","6","","9","","5","1"],
+##                                  ["","","2","","1","3","6","",""],
+##                                  ["","4","","","","","","9",""],
+##                                  ["","","","9","","8","2","7",""]],
+##                               3:[["","8","4","","","2","","3",""],
+##                                  ["2","","7","8","3","1","","","9"],
+##                                  ["","1","","5","","","","2","7"],
+##                                  ["","7","8","","1","","9","","2"],
+##                                  ["","","9","7","6","","","8","5"],
+##                                  ["5","","1","9","","","3","",""],
+##                                  ["","3","","1","","7","4","","6"],
+##                                  ["","","5","2","","","","",""],
+##                                  ["7","","","3","9","","","",""]]}
+##partidas_predefinidas_medias={1:[["3","","","","","","","2",""],
+##                                  ["","8","","4","3","2","","1",""],
+##                                  ["","5","","","","","6","",""],
+##                                  ["","7","4","8","6","","","",""],
+##                                  ["","3","","1","","","7","",""],
+##                                  ["","","","2","9","6","8","7","1"],
+##                                  ["6","","","","","","3","4",""],
+##                                  ["","","","4","1","9","","","5"],
+##                                  ["1","9","","7","","","","","6"]],
+##                               2:[["","","7","4","1","5","","",""],
+##                                  ["","","","","","","7","","5"],
+##                                  ["4","9","2","","","3","8","","5"],
+##                                  ["","2","","","","","","4",""],
+##                                  ["","","4","","","6","1","",""],
+##                                  ["1","","9","","","","","7","3"],
+##                                  ["","","","","7","","","","1"],
+##                                  ["","","","8","","","","","9"],
+##                                  ["6","","1","5","4","","","","7"]],
+##                               3:[["","","8","9","","3","7","","4"],
+##                                  ["","","2","","","","","","9"],
+##                                  ["","","7","","5","","","8",""],
+##                                  ["2","","","","","8","4","",""],
+##                                  ["","","4","","","","8","9",""],
+##                                  ["6","","","4","","","","","1"],
+##                                  ["4","","","","","","6","","2"],
+##                                  ["","5","1","7","2","","9","",""],
+##                                  ["9","","","","","5","1","",""]]}
+##partidas_predefinidas_dificiles={1:[["","","","","4","","6","1",""],
+##                                  ["6","","","","","","","",""],
+##                                  ["5","","1","","","2","","8","4"],
+##                                  ["","9","","","","7","","","2"],
+##                                  ["","","","","8","","","",""],
+##                                  ["2","1","","3","","6","7","",""],
+##                                  ["1","","5","","6","3","4","",""],
+##                                  ["9","6","","","1","5","","",""],
+##                                  ["3","","","","","","","",""]],
+##                               2:[["","","5","","","","","",""],
+##                                  ["","6","2","","","","","3",""],
+##                                  ["3","7","","","2","","","",""],
+##                                  ["","","","2","","","","",""],
+##                                  ["","1","8","","9","","5","","4"],
+##                                  ["4","","6","","","","","8",""],
+##                                  ["","3","","6","","","","9",""],
+##                                  ["","","","","","","","2",""],
+##                                  ["","","7","5","","9","3","6",""]],
+##                               3:[["","3","","6","","2","9","",""],
+##                                  ["","","","5","","9","","",""],
+##                                  ["","4","9","","3","","2","",""],
+##                                  ["","","","","","","","9","6"],
+##                                  ["","","9","7","6","","","8","5"],
+##                                  ["","","2","","1","5","","","8"],
+##                                  ["","3","","1","","7","4","","6"],
+##                                  ["1","","","","","","4","2",""],
+##                                  ["","7","","","2","","","6",""]]}
+##partidas_predefinidas=open("sudoku2021partidas.dat","w")
+##partidas_predefinidas.write(str(partidas_predefinidas_faciles))
+##partidas_predefinidas.write("\n")
+##partidas_predefinidas.write(str(partidas_predefinidas_medias))
+##partidas_predefinidas.write("\n")
+##partidas_predefinidas.write(str(partidas_predefinidas_dificiles))
+##partidas_predefinidas.close()
+partidas_predefinidas=open("sudoku2021partidas.dat","r")
+texto=partidas_predefinidas.read()
+partidas_faciles={}
+partidas_medias={}
+partidas_dificiles={}
+matriz=[]
+lista=[]
+cont_partidas=0
+cont_llaves=0
+cont_listas=0
+cont=0
+for indice,n in enumerate(texto):
+     if n=="[" and texto[indice+1]=="[":
+          cont_partidas+=1
+     if indice<len(texto)-1 and texto[indice+1]!=":":
+          if n=="1" or n=="2" or n=="3" or n=="4" or n=="5" or n=="6" or n=="7" or n=="8" or n=="9":
+               lista.append(n)
+     if n=="'" and texto[indice+1]=="'":
+          lista.append("")
+     if n=="]" and texto[indice+1]!="]":
+          if lista!=[]:
+               matriz.append(lista)
+               lista=[]
+     if n=="]" and texto[indice+1]=="]":
+          cont_llaves+=1
+          matriz.append(lista)
+          if cont_llaves<=3:
+               partidas_faciles[cont_partidas]=matriz
+          if cont_llaves<=6 and cont_llaves>3:
+               if cont_llaves==4:
+                    cont=1
+               elif cont_llaves==5:
+                    cont=2
+               else:
+                    cont=3
+               partidas_medias[cont]=matriz
+          if cont_llaves<=9 and cont_llaves>6:
+               if cont_llaves==7:
+                    cont=1
+               elif cont_llaves==8:
+                    cont=2
+               else:
+                    cont=3
+               partidas_dificiles[cont]=matriz
+          matriz=[]
+          lista=[]
 elementos_numeros=["1","2","3","4","5","6","7","8","9"]
 elementos_letras=["A","B","C","D","E","F","G","H","I"]
 elementos_simbolos=["#","*","&","%","°","$","+","-","/"]
-bandera_reloj=0
+bandera_reloj=1
 bandera_timer=0
+bandera_nivel_facil=1
+bandera_nivel_medio=0
+bandera_nivel_dificil=0
+bandera_top_x=0
+bandera_numeros=1
+bandera_letras=0
+bandera_simbolos=0
+bandera_pasa_configuracion=0
+bandera_boton_picado=0
 bandera_inicio_juego=0
+elemento_agregar=0
+partida=0
+elementos_fijos=[]
 
 def nombre():
      """
@@ -111,7 +177,7 @@ def nombre():
      global nombre_j
      nom=nombre_j.get()
      if len(nom)>0 and len(nom)<30:
-          inicio()
+          inicio_f()
      else:
           messagebox.showinfo("Usuario"," Debe de ingresar su nombre el mismo debe de \n tener entre 1 y 30 carácteres")
 
@@ -217,13 +283,21 @@ def configurar_v():
      """
      global bandera_reloj
      global bandera_timer
-     global horas1
-     global minutos1
      global segundos1
+     global minutos1
+     global horas1
      global horas_1
      global minutos_1
      global segundos_1
-     #open("2048configuración.dat")
+     global bandera_nivel_facil
+     global bandera_nivel_medio
+     global bandera_nivel_dificil
+     global bandera_top_x
+     global partidas_topx
+     global bandera_numeros
+     global bandera_letras
+     global bandera_simbolos
+     global bandera_pasa_configuracion
      configura=tk.Tk()
      configura.iconbitmap("x.ico")
      configura.title("Configurar")
@@ -264,19 +338,116 @@ def configurar_v():
           global bandera_timer
           bandera_reloj=0
           bandera_timer=1
+     def validaciones_configuracion():
+          global bandera_timer
+          global horas1
+          global minutos1
+          global segundos1
+          global horas_1
+          global minutos_1
+          global segundos_1
+          global partidas_topx
+          global bandera_pasa_configuracion
+          if bandera_timer==1:
+               horas_1=horas1.get()
+               minutos_1=minutos1.get()
+               segundos_1=segundos1.get()
+               if horas_1=="" and minutos_1=="" and segundos_1=="":
+                    messagebox.showinfo("Error"," Al menos uno de las casillas debe de ser llenada")
+               if horas_1!="" and minutos_1!="":
+                    segundos_1=0
+               elif minutos_1!="" and segundos_1!="":
+                    horas_1=0
+               elif segundos_1!="" and horas_1!="":
+                    minutos_1=0
+               if horas_1=="" and minutos_1=="":
+                    horas_1=0
+                    minutos_1=0
+               if minutos_1=="" and segundos_1=="":
+                    segundos_1=0
+                    minutos_1=0
+               if segundos_1=="" and horas_1=="":
+                    segundos_1=0
+                    horas_1=0
+               if not int(horas_1)>=0 and not int(horas_1)<=4:
+                    messagebox.showinfo("Error"," La cantidad de horas debe de estar entre 0 y 4")
+               if not int(minutos_1)>=0 and not int(minutos_1)<=59:
+                    messagebox.showinfo("Error"," La cantidad de minutos deben de estar entre 0 y 59")
+               if not int(segundos_1)>=0 and not int(segundos_1)<=59:
+                    messagebox.showinfo("Error"," La cantidad de segundos deben de estar entre 0 y 59")
+          partidas_top_x=partidas_topx.get()
+          if partidas_top_x!="" and int(partidas_top_x)>=0 and int(partidas_top_x)<=100:
+               bandera_top_x=partidas_top_x
+               bandera_pasa_configuracion=1
+          else:
+               messagebox.showinfo("Error"," La cantidad de partidas en el Top X \n debe de estar entre 0 y 100")
+          if bandera_pasa_configuracion==1:
+               #open("sudoku2021configuración.dat")
+               configura.destroy()
+     def activa_bandera_facil():
+          global bandera_nivel_facil
+          global bandera_nivel_medio
+          global bandera_nivel_dificil
+          banadera_nivel_facil=1
+          bandera_nivel_medio=0
+          bandera_nivel_dificil=0
+          minutos1.delete(0,"end")
+          segundos1.delete(0,"end")
+          horas1.delete(0,"end")
+          minutos1.insert(0,"30")
+     def activa_bandera_medio():
+          global bandera_nivel_facil
+          global bandera_nivel_medio
+          global bandera_nivel_dificil
+          banadera_nivel_facil=0
+          bandera_nivel_medio=1
+          bandera_nivel_dificil=0
+          minutos1.delete(0,"end")
+          segundos1.delete(0,"end")
+          horas1.delete(0,"end")
+          horas1.insert(0,"1")
+     def activa_bandera_dificil():
+          global bandera_nivel_facil
+          global bandera_nivel_medio
+          global bandera_nivel_dificil
+          banadera_nivel_facil=0
+          bandera_nivel_medio=0
+          bandera_nivel_dificil=1
+          minutos1.delete(0,"end")
+          segundos1.delete(0,"end")
+          horas1.delete(0,"end")
+          horas1.insert(0,"2")
+     def activa_elementos_numeros():
+          global bandera_numeros
+          global bandera_letras
+          global bandera_simbolos
+          bandera_numeros=1
+          bandera_letras=0
+          bandera_simbolos=0
+     def activa_elementos_letras():
+          global bandera_numeros
+          global bandera_letras
+          global bandera_simbolos
+          bandera_numeros=0
+          bandera_letras=1
+          bandera_simbolos=0
+     def activa_elementos_simbolos():
+          global bandera_numeros
+          global bandera_letras
+          global bandera_simbolos
+          bandera_numeros=0
+          bandera_letras=0
+          bandera_simbolos=1
      #Niveles
      label_nivel=tk.Label(configura,text="1. Nivel:",font=("Arial Black",10),bg="AntiqueWhite1")
      label_nivel.grid(row=0,column=0)
-     #none=tk.Label(configura,text="",bg="AntiqueWhite1")
-     #none.grid(row=1,column=0)
-     
      nivel=tk.Frame(configura,bg="AntiqueWhite1",height=200,width=200)
      valor_nivel=tk.IntVar()
-     facil=tk.Radiobutton(nivel,text="Fácil",variable=valor_nivel,value=1,bg="AntiqueWhite1",command=lambda:activa_bandera_reloj())
+     facil=tk.Radiobutton(nivel,text="Fácil",variable=valor_nivel,value=1,bg="AntiqueWhite1",command=lambda:activa_bandera_facil())
      facil.grid(row=0,column=0)
-     intermedio=tk.Radiobutton(nivel,text="Intermedio",variable=valor_nivel,value=2,bg="AntiqueWhite1",command=lambda:desactiva_bandera_reloj())
+     intermedio=tk.Radiobutton(nivel,text="Intermedio",variable=valor_nivel,value=2,bg="AntiqueWhite1",command=lambda:activa_bandera_medio())
      intermedio.grid(row=0,column=1)
-     dificil=tk.Radiobutton(nivel,text="Difícil",variable=valor_nivel,value=3,bg="AntiqueWhite1",command=lambda:activa_bandera_timer())
+     dificil=tk.Radiobutton(nivel,text="Difícil",variable=valor_nivel,value=3,bg="AntiqueWhite1",command=lambda:activa_bandera_dificil())
      dificil.grid(row=0,column=2)
      nivel.grid(row=2,column=0)
      #Reloj
@@ -284,11 +455,11 @@ def configurar_v():
      label_reloj.grid(row=3,column=0)
      reloj=tk.Frame(configura,bg="AntiqueWhite1",height=200,width=200)
      valor_reloj=tk.IntVar()
-     si=tk.Radiobutton(reloj,text="Si",variable=valor_reloj,value=1,bg="AntiqueWhite1",command=lambda:activa_bandera_reloj())
+     si=tk.Radiobutton(reloj,text="Si",value=1,variable=valor_reloj,bg="AntiqueWhite1",command=lambda:activa_bandera_reloj())
      si.grid(row=0,column=0)
-     no=tk.Radiobutton(reloj,text="No",variable=valor_reloj,value=2,bg="AntiqueWhite1",command=lambda:desactiva_bandera_reloj())
+     no=tk.Radiobutton(reloj,text="No",value=2,variable=valor_reloj,bg="AntiqueWhite1",command=lambda:desactiva_bandera_reloj())
      no.grid(row=0,column=1)
-     timer=tk.Radiobutton(reloj,text="Timer",variable=valor_reloj,value=3,bg="AntiqueWhite1",command=lambda:activa_bandera_timer())
+     timer=tk.Radiobutton(reloj,text="Timer",value=3,variable=valor_reloj,bg="AntiqueWhite1",command=lambda:activa_bandera_timer())
      timer.grid(row=0,column=2)
      reloj.grid(row=4,column=0)
      #Tabla de tiempo
@@ -303,70 +474,183 @@ def configurar_v():
      horas1.grid(row=1,column=1)
      minutos1=tk.Entry(reloj_tabla,bg="alice blue")
      minutos1.grid(row=1,column=2)
+     minutos1.insert(0,"30")
      segundos1=tk.Entry(reloj_tabla,bg="azure")
      segundos1.grid(row=1,column=3)
      reloj_tabla.grid(row=5,column=0)
-
+     #Cantidad de partidas en el Top X
      label_top_x=tk.Label(configura,text="3. Cantidad de partidas en el Top X:",font=("Arial Black",10),bg="AntiqueWhite1")
      label_top_x.grid(row=6,column=0)
      partidas_topx=tk.Entry(configura,bg="azure")
      partidas_topx.grid(row=7,column=0)
-     partidas_top_x=partidas_topx.get()
-
+     #Elementos para la Cuadrícula
      elementos_tablero=tk.Label(configura,text="4. Elementos para la Cuadrícula:",font=("Arial Black",10),bg="AntiqueWhite1")
      elementos_tablero.grid(row=8,column=0)
      elementos_table=tk.Frame(configura,bg="AntiqueWhite1",height=200,width=200)
      valor_elementos=tk.IntVar()
-     numeros=tk.Radiobutton(elementos_table,text="Números",variable=valor_elementos,value=1,bg="AntiqueWhite1",command=lambda:activa_bandera_reloj())
+     numeros=tk.Radiobutton(elementos_table,text="Números",variable=valor_elementos,value=1,bg="AntiqueWhite1",command=lambda:activa_elementos_numeros())
      numeros.grid(row=0,column=0)
-     letras=tk.Radiobutton(elementos_table,text="Letras",variable=valor_elementos,value=2,bg="AntiqueWhite1",command=lambda:desactiva_bandera_reloj())
+     letras=tk.Radiobutton(elementos_table,text="Letras",variable=valor_elementos,value=2,bg="AntiqueWhite1",command=lambda:activa_elementos_letras())
      letras.grid(row=0,column=1)
-     simbolos=tk.Radiobutton(elementos_table,text="Símbolos",variable=valor_elementos,value=3,bg="AntiqueWhite1",command=lambda:activa_bandera_timer())
+     simbolos=tk.Radiobutton(elementos_table,text="Símbolos",variable=valor_elementos,value=3,bg="AntiqueWhite1",command=lambda:activa_elementos_simbolos())
      simbolos.grid(row=0,column=2)
      elementos_table.grid(row=9,column=0)
-
-     aceptar=tk.Button(configura,text="Aceptar",bg="alice blue",font=("Arial Black",8),command=lambda:valida_timer())
+     #Aceptar
+     aceptar=tk.Button(configura,text="Aceptar",bg="alice blue",font=("Arial Black",8),command=lambda:validaciones_configuracion())
      aceptar.grid(row=10,column=3)
      configura.mainloop()
-     def valida_timer():
-          global horas_1
-          global minutos_1
-          global segundos_1
-          horas_1=horas1.get()
-          minutos_1=minutos1.get()
-          segundos_1=segundos1.get()
-          if horas_1=="" and minutos_1=="" and segundos_1=="":
-               messagebox.showinfo("Error"," Al menos uno de las casillas debe de ser llenada")
-               configura.destroy()
-               configurar()
-          if horas_1!="" and minutos_1!="":
-               segundos_1=0
-          elif minutos_1!="" and segundos_1!="":
-               horas_1=0
-          elif segundos_1!="" and horas_1!="":
-               minutos_1=0
-          if horas_1=="" and minutos_1=="":
-               horas_1=0
-               minutos_1=0
-          if minutos_1=="" and segundos_1=="":
-               segundos_1=0
-               minutos_1=0
-          if segundos_1=="" and horas_1=="":
-               segundos_1=0
-               horas_1=0
-          if not int(horas_1)>=0 and not int(horas_1)<=99:
-               messagebox.showinfo("Error"," La cantidad de horas debe de estar entre 0 y 99")
-               configura.destroy()
-               configurar()
-          if not int(minutos_1)>=0 and not int(minutos_1)<=0:
-               messagebox.showinfo("Error"," La cantidad de minutos deben de estar entre 0 y 59")
-               configura.destroy()
-               configurar()
-          if not int(segundos_1)>=0 and not int(segundos_1)<=0:
-               messagebox.showinfo("Error"," La cantidad de segundos deben de estar entre 0 y 59")
-               configura.destroy()
-               configurar()
-          configura.destroy()
+
+def inicio_f():
+     global partidas_faciles
+     global partidas_medias
+     global partidas_dificiles
+     global bandera_nivel_facil
+     global bandera_nivel_medio
+     global bandera_nivel_dificil
+     global partida
+     global iniciar_juego
+     #global matriz_botones
+     global matriz_botones_2
+     global tablero_g
+     global bandera_simbolos
+     global bandera_letras
+     global elementos_fijos
+     global bandera_inicio_juego
+     iniciar_juego.config(state="disabled")
+     bandera_inicio_juego=1
+     cantidad_de_partidas_faciles=len(partidas_faciles)
+     cantidad_de_partidas_medias=len(partidas_medias)
+     cantidad_de_partidas_dificiles=len(partidas_dificiles)
+     if bandera_nivel_facil==1:
+          llave_partida_facil=randint(1,cantidad_de_partidas_faciles)
+          partida=partidas_faciles[llave_partida_facil]
+     elif bandera_nivel_medio==1:
+          llave_partida_media=randint(1,cantidad_de_partidas_medias)
+          partida=partidas_medias[llave_partida_media]
+     else:
+          llave_partida_dificil=randint(1,cantidad_de_partidas_dificiles)
+          partida=partidas_dificiles[llave_partida_dificil]
+     for indice,lista in enumerate(matriz_botones_2):
+          for indice1,boton in enumerate(lista):
+               if partida[indice][indice1]!="":
+                    if bandera_letras==1:
+                         if partida[indice][indice1]=="1":
+                              texto="A"
+                         elif partida[indice][indice1]=="2":
+                              texto="B"
+                         elif partida[indice][indice1]=="3":
+                              texto="C"
+                         elif partida[indice][indice1]=="4":
+                              texto="D"
+                         elif partida[indice][indice1]=="5":
+                              texto="E"
+                         elif partida[indice][indice1]=="6":
+                              texto="F"
+                         elif partida[indice][indice1]=="7":
+                              texto="G"
+                         elif partida[indice][indice1]=="8":
+                              texto="H"
+                         else:
+                              texto="I"
+                         matriz_botones_2[indice][indice1][0].config(text=texto)
+                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                    elif bandera_simbolos==1:
+                         if partida[indice][indice1]=="1":
+                              texto="#"
+                         elif partida[indice][indice1]=="2":
+                              texto="*"
+                         elif partida[indice][indice1]=="3":
+                              texto="&"
+                         elif partida[indice][indice1]=="4":
+                              texto="%"
+                         elif partida[indice][indice1]=="5":
+                              texto="°"
+                         elif partida[indice][indice1]=="6":
+                              texto="$"
+                         elif partida[indice][indice1]=="7":
+                              texto="+"
+                         elif partida[indice][indice1]=="8":
+                              texto="-"
+                         else:
+                              texto="/"
+                         matriz_botones_2[indice][indice1][0].config(text=texto)
+                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                    else:
+                         matriz_botones_2[indice][indice1][0].config(text=partida[indice][indice1])
+                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],partida[indice][indice1])
+                    elementos_fijos.append(matriz_botones_2[indice][indice1][0])
+def asigna_valor(x,y):
+     global matriz_botones
+     global matriz_botones_2
+     global elemento_agregar
+     if matriz_botones[x][y] in elementos_fijos:
+          messagebox.showinfo("Error"," Jugada no es valida porque este es un elemento fijo")
+     i=x
+     j=y
+     if x>=8:
+          i=x-2
+     elif x>=4:
+          i=x-1
+     if y>=8:
+          j=y-2
+     elif y>=4:
+          j=y-1
+     #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA FILA
+     for indice,boton in enumerate(matriz_botones_2[i]):
+          if boton[1]==str(elemento_agregar):
+               boton[0].config(bg="red")
+               messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la fila")
+               boton[0].config(bg="lavender")
+     #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA COLUMNA
+     for indice,boton in enumerate(matriz_botones_2):
+          if boton[j][1]==str(elemento_agregar):
+               boton[j][0].config(bg="red")
+               messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la columna")
+               boton[j][0].config(bg="lavender")
+     #JUGADA NO ES VÁLIDA PORQUE EL ELEMENTO YA ESTÁ EN LA CUADRÍCULA
+     cuadricula_1=[matriz_botones_2[0][0],matriz_botones_2[0][1],matriz_botones_2[0][2],matriz_botones_2[1][0],matriz_botones_2[1][1],matriz_botones_2[1][2],matriz_botones_2[2][0],matriz_botones_2[2][1],matriz_botones_2[2][2]]
+     cuadricula_2=[matriz_botones_2[0][3],matriz_botones_2[0][4],matriz_botones_2[0][5],matriz_botones_2[1][3],matriz_botones_2[1][4],matriz_botones_2[1][5],matriz_botones_2[2][3],matriz_botones_2[2][4],matriz_botones_2[2][5]]
+     cuadricula_3=[matriz_botones_2[0][6],matriz_botones_2[0][7],matriz_botones_2[0][8],matriz_botones_2[1][6],matriz_botones_2[1][7],matriz_botones_2[1][8],matriz_botones_2[2][6],matriz_botones_2[2][7],matriz_botones_2[2][8]]
+     cuadricula_4=[matriz_botones_2[3][0],matriz_botones_2[3][1],matriz_botones_2[3][2],matriz_botones_2[4][0],matriz_botones_2[4][1],matriz_botones_2[4][2],matriz_botones_2[5][0],matriz_botones_2[5][1],matriz_botones_2[5][2]]
+     cuadricula_5=[matriz_botones_2[3][3],matriz_botones_2[3][4],matriz_botones_2[3][5],matriz_botones_2[4][3],matriz_botones_2[4][4],matriz_botones_2[4][5],matriz_botones_2[5][3],matriz_botones_2[5][4],matriz_botones_2[5][5]]
+     cuadricula_6=[matriz_botones_2[3][6],matriz_botones_2[3][7],matriz_botones_2[3][8],matriz_botones_2[4][6],matriz_botones_2[4][7],matriz_botones_2[4][8],matriz_botones_2[5][6],matriz_botones_2[5][7],matriz_botones_2[5][8]]
+     cuadricula_7=[matriz_botones_2[6][0],matriz_botones_2[6][1],matriz_botones_2[6][2],matriz_botones_2[7][0],matriz_botones_2[7][1],matriz_botones_2[7][2],matriz_botones_2[8][0],matriz_botones_2[8][1],matriz_botones_2[8][2]]
+     cuadricula_8=[matriz_botones_2[6][3],matriz_botones_2[6][4],matriz_botones_2[6][5],matriz_botones_2[7][3],matriz_botones_2[7][4],matriz_botones_2[7][5],matriz_botones_2[8][3],matriz_botones_2[8][4],matriz_botones_2[8][5]]
+     cuadricula_9=[matriz_botones_2[6][6],matriz_botones_2[6][7],matriz_botones_2[6][8],matriz_botones_2[7][6],matriz_botones_2[7][7],matriz_botones_2[7][8],matriz_botones_2[8][6],matriz_botones_2[8][7],matriz_botones_2[8][8]]
+     x=0
+     def auxiliar_error(boton):
+          global matriz_botones
+          boton.config(bg="red")
+          messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la cudrícula")
+          boton.config(bg="lavender")
+     def recorre_cuadricula(c,x):
+          for boton in c:
+               if boton[0]==matriz_botones[x][y]:
+                    x=1
+                    auxiliar_error(boton[0])
+     if x==0:
+          recorre_cuadricula(cuadricula_1,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_2,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_3,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_4,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_5,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_6,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_7,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_8,x)
+     if x==0:
+          recorre_cuadricula(cuadricula_9,x)
+     if x==0:
+          if elemento_agregar!=0:
+               matriz_botones[x][y].config(text=str(elemento_agregar))
+               matriz_botones_2[i][j]=(matriz_botones_2[i][j][0],str(elemento_agregar))
+     return x,y
 
 #JUGAR:
 def jugar_f():
@@ -378,11 +662,26 @@ def jugar_f():
      """
      global menu_p
      global nombre_j
+     global horas_1
+     global minutos_1
+     global segundos_1
+     global elementos_numeros
+     global elementos_letras
+     global elementos_simbolos
+     global bandera_numeros
+     global bandera_letras
+     global bandera_simbolos
+     global bandera_boton_picado
+     global partida
+     global iniciar_juego
+     global matriz_botones
+     global matriz_botones_2
+     global tablero_g
      menu_p.destroy()
      jugar_v=tk.Tk()
      jugar_v.iconbitmap("x.ico")
      jugar_v.title("SUDOKU")
-     jugar_v.geometry("1050x720")
+     jugar_v.geometry("950x720")
      jugar_v.config(bg="AntiqueWhite1")
      jugar_v.resizable(False,False)
      titulo=tk.Label(jugar_v,text="S U D O K U",font=("Arial Black",20),bg="AntiqueWhite1")
@@ -396,133 +695,143 @@ def jugar_f():
      none=tk.Label(jugar_v,bg="AntiqueWhite1")
      none.grid(row=2,column=2)
 
-     #TABLERO DEL JUEGO:**************************************************
-     def asigna_valor(x,y):
-          for indice,fila in enumerate(matriz_botones):
-               for indice1,columna in enumerate(x):
-                    if fila==x and columna==y:
-                         print(x,y)
+     #TABLERO DEL JUEGO:
      tablero_g=tk.Frame(jugar_v,bg="turquoise")
      matriz_botones=[]
+     matriz_botones_2=[]
      for x in range (0,11):
           fila_botones=[]
+          fila_botones_2=[]
           for y in range (0,11):
                if x==3 or x==7 or y==3 or y==7:
                     none=tk.Label(tablero_g,bg="turquoise")
                     none.grid(row=x,column=y)
                     fila_botones.append(none)
                else:
-                    casilla=tk.Button(tablero_g,bg="lavender",activebackground="bisque",height=2,width=5,command=lambda:asigna_valor(x,y))
+                    casilla=tk.Button(tablero_g,bg="lavender",activebackground="bisque",height=2,width=5,command=partial(asigna_valor,x,y))
                     casilla.grid(row=x,column=y,padx=2,pady=2)
                     fila_botones.append(casilla)
+                    fila_botones_2.append((casilla,""))
+          if fila_botones_2!=[]:
+               matriz_botones_2.append(fila_botones_2)
+          matriz_botones.append(fila_botones)
      tablero_g.grid(row=3,column=2)
+     def meter_elemento(numero,b):
+          global elemento_agregar
+          global bandera_boton_picado
+          if bandera_boton_picado!=0:
+               bandera_boton_picado.config(bg="turquoise")
+          b.config(bg="steel blue")
+          bandera_boton_picado=b
+          elemento_agregar=numero
      #ELEMENTOS DEL TABLERO:
-     elementos=tk.Frame(jugar_v,bg="SkyBlue1",height=200,width=200)
-     uno=tk.Button(elementos,text="1",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     if bandera_numeros==1:
+          texto=elementos_numeros
+     if bandera_letras==1:
+          texto=elementos_letras
+     if bandera_simbolos==1:
+          texto=elementos_simbolos
+     elementos=tk.Frame(jugar_v,bg="SkyBlue1")
+     uno=tk.Button(elementos,text=texto[0],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[0],uno))
      uno.grid(row=0,column=0,padx=2,pady=2)
-     dos=tk.Button(elementos,text="2",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     dos=tk.Button(elementos,text=texto[1],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[1],dos))
      dos.grid(row=0,column=1,padx=2,pady=2)
-     tres=tk.Button(elementos,text="3",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     tres=tk.Button(elementos,text=texto[2],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[2],tres))
      tres.grid(row=0,column=2,padx=2,pady=2)
-     cuatro=tk.Button(elementos,text="4",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     cuatro=tk.Button(elementos,text=texto[3],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[3],cuatro))
      cuatro.grid(row=1,column=0,padx=2,pady=2)
-     cinco=tk.Button(elementos,text="5",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     cinco=tk.Button(elementos,text=texto[4],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[4],cinco))
      cinco.grid(row=1,column=1,padx=2,pady=2)
-     seis=tk.Button(elementos,text="6",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     seis=tk.Button(elementos,text=texto[5],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[5],seis))
      seis.grid(row=1,column=2,padx=2,pady=2)
-     siete=tk.Button(elementos,text="7",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     siete=tk.Button(elementos,text=texto[6],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[6],siete))
      siete.grid(row=2,column=0,padx=2,pady=2)
-     ocho=tk.Button(elementos,text="8",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     ocho=tk.Button(elementos,text=texto[7],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[7],ocho))
      ocho.grid(row=2,column=1,padx=2,pady=2)
-     nueve=tk.Button(elementos,text="9",bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2)#,command=lambda:)
+     nueve=tk.Button(elementos,text=texto[8],bg="turquoise",activebackground="bisque",font=("Arial Black",11),width=2,command=lambda:meter_elemento(texto[8],nueve))
      nueve.grid(row=2,column=2,padx=2,pady=2)
-     elementos.grid(row=3,column=5,padx=2,pady=2)
-     #BOTONES:
-     iniciar_juego=tk.Button(jugar_v,text=" INICIAR \n JUEGO",bg="OliveDrab2",height=2,font=("Arial Black",10),command=lambda:nombre())
-     iniciar_juego.grid(row=4,column=3)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=4,column=4)
-
-     deshacer_jugada=tk.Button(jugar_v,text=" DESHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:nueva_p(cuadricula,pares))
-     deshacer_jugada.grid(row=4,column=5)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=4,column=6)
-
-     rehacer_jugada=tk.Button(jugar_v,text=" REHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:sal())
-     rehacer_jugada.grid(row=4,column=7)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=4,column=8)
-
-     guardar_juego=tk.Button(jugar_v,text="GUARDAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
-     guardar_juego.grid(row=4,column=9)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=5,column=4)
-
-     top_x=tk.Button(jugar_v,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10))
-     top_x.grid(row=6,column=3)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=6,column=4)
-
-     borrar_juego=tk.Button(jugar_v,text=" BORRAR \n JUEGO",bg="salmon1",height=2,font=("Arial Black",10))#,command=lambda:salirr())
-     borrar_juego.grid(row=6,column=5)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=6,column=6)
-
-     terminar_juego=tk.Button(jugar_v,text=" TERMINAR \n JUEGO",bg="coral2",height=2,font=("Arial Black",10),command=lambda:terminar_juego_f())
-     terminar_juego.grid(row=6,column=7)
-     none=tk.Label(jugar_v,text="  ",bg="AntiqueWhite1")
-     none.grid(row=6,column=8)
-
-     cargar_juego=tk.Button(jugar_v,text="CARGAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
-     cargar_juego.grid(row=6,column=9)
-     jugar_v.mainloop()
+     elementos.grid(row=3,column=4,padx=2,pady=2)
+     
      #RELOJ:
-     """
-     #ventana_x=tk.Frame(ventana1,bg="AntiqueWhite1",height=200,width=200)
      if bandera_reloj==1:
-          ventana_x=tk.Frame(ventana1,bg="AntiqueWhite1",height=200,width=200)
-          reloj=tk.Label(ventana_x,text="Reloj",font=("Arial Black",10),bg="cyan",width=13)
-          reloj.grid(row=0,column=0)
-            
-          h=tk.Label(ventana_x,text="Horas",font=("Arial Black",10),bg="green4",width=13)
-          h.grid(row=1,column=0)
-          m=tk.Label(ventana_x,text="Minutos",font=("Arial Black",10),bg="green2",width=13)
-          m.grid(row=1,column=1)
-          s=tk.Label(ventana_x,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
-          ventana_x.grid(row=8,column=2)
-          s.grid(row=1,column=2)
-          x=tk.Label(ventana1,text="00            :             00            :           00",font=("Arial Black",10),bg="azure",width=41)
-          x.grid(row=9,column=2)
-          ventana_x.grid(row=8,column=2)
+          ventana_para_reloj=tk.Frame(jugar_v,bg="AntiqueWhite1",height=200,width=200)
+          none=tk.Label(ventana_para_reloj,text="Reloj",font=("Arial Black",10),bg="cyan",width=13)
+          none.grid(row=0,column=0)
+          none=tk.Label(ventana_para_reloj,text="Horas",font=("Arial Black",10),bg="green4",width=13)
+          none.grid(row=1,column=0)
+          none=tk.Label(ventana_para_reloj,text="Minutos",font=("Arial Black",10),bg="green2",width=13)
+          none.grid(row=1,column=1)
+          none=tk.Label(ventana_para_reloj,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
+          none.grid(row=1,column=2)
+          none=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
+          none.grid(row=2,column=0)
+          none=tk.Label(ventana_para_reloj,text="              00            :",font=("Arial Black",10),bg="azure",width=13)
+          none.grid(row=2,column=1)
+          none=tk.Label(ventana_para_reloj,text="              00            ",font=("Arial Black",10),bg="azure",width=13)
+          none.grid(row=2,column=2)
+          ventana_para_reloj.grid(row=4,column=2)
+     #TIMER:
      if bandera_timer==1:
-          ventana_x=tk.Frame(ventana1,bg="AntiqueWhite1",height=200,width=200)
-          timer=tk.Label(ventana_x,text="Timer",font=("Arial Black",10),bg="cyan",width=13)
-          timer.grid(row=0,column=0)
+          ventana_para_timer=tk.Frame(jugar_v,bg="AntiqueWhite1",height=200,width=200)
+          none=tk.Label(ventana_para_timer,text="Timer",font=("Arial Black",10),bg="cyan",width=13)
+          none.grid(row=0,column=0)
+          none=tk.Label(ventana_para_timer,text="Horas",font=("Arial Black",10),bg="green4",width=13)
+          none.grid(row=1,column=0)
+          none=tk.Label(ventana_para_timer,text="Minutos",font=("Arial Black",10),bg="green2",width=13)
+          none.grid(row=1,column=1)
+          none=tk.Label(ventana_para_timer,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
+          none.grid(row=1,column=2)
+          horas=tk.Entry(ventana_para_timer,bg="azure")
+          horas.grid(row=2,column=0)
+          horas.insert(0,horas_1)
+          minutos=tk.Entry(ventana_para_timer,bg="azure")
+          minutos.grid(row=2,column=1)
+          minutos.insert(0,minutos_1)
+          segundos=tk.Entry(ventana_para_timer,bg="azure")
+          segundos.grid(row=2,column=2)
+          segundos.insert(0,segundos_1)
+          ventana_para_timer.grid(row=4,column=2)
+     #BOTONES:
+     elementos_para_tablero=tk.Frame(jugar_v,bg="AntiqueWhite1")
+     iniciar_juego=tk.Button(elementos_para_tablero,text=" INICIAR \n JUEGO",bg="OliveDrab2",height=2,font=("Arial Black",10),command=lambda:nombre())
+     iniciar_juego.grid(row=0,column=0)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=0,column=1)
 
-          h=tk.Label(ventana_x,text="Horas",font=("Arial Black",10),bg="green4",width=13)
-          h.grid(row=1,column=0)
-          m=tk.Label(ventana_x,text="Minutos",font=("Arial Black",10),bg="green2",width=13)
-          m.grid(row=1,column=1)
-          s=tk.Label(ventana_x,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
-          s.grid(row=1,column=2)
+     deshacer_jugada=tk.Button(elementos_para_tablero,text=" DESHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:nueva_p(cuadricula,pares))
+     deshacer_jugada.grid(row=0,column=2)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=0,column=3)
 
-          hora_1=tk.Entry(ventana_x,bg="azure")
-          hora_1.grid(row=2,column=0)
-          hora_1.insert(0,horas_1)
-          minuto_1=tk.Entry(ventana_x,bg="azure")
-          minuto_1.grid(row=2,column=1)
-          minuto_1.insert(0,minutos_1)
-          segundo_1=tk.Entry(ventana_x,bg="azure")
-          segundo_1.grid(row=2,column=2)
-          segundo_1.insert(0,segundos_1)
-          ventana_x.grid(row=8,column=2)
-          
-          if bandera_mejorj==1:
-               mejor_jugador=tk.Label(ventana1,text="Mejor jugador: ",font=("Arial Black",12),bg="AntiqueWhite1")
-               mejor_jugador.grid(row=7,column=0)
+     rehacer_jugada=tk.Button(elementos_para_tablero,text=" REHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:sal())
+     rehacer_jugada.grid(row=0,column=4)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=0,column=5)
 
-     """
-    
+     guardar_juego=tk.Button(elementos_para_tablero,text="GUARDAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
+     guardar_juego.grid(row=0,column=6)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=1,column=0)
+
+     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10))
+     top_x.grid(row=2,column=0)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=2,column=1)
+
+     borrar_juego=tk.Button(elementos_para_tablero,text=" BORRAR \n JUEGO",bg="salmon1",height=2,font=("Arial Black",10))#,command=lambda:salirr())
+     borrar_juego.grid(row=2,column=2)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=2,column=3)
+
+     terminar_juego=tk.Button(elementos_para_tablero,text=" TERMINAR \n JUEGO",bg="coral2",height=2,font=("Arial Black",10),command=lambda:terminar_juego_f())
+     terminar_juego.grid(row=2,column=4)
+     none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
+     none.grid(row=2,column=5)
+
+     cargar_juego=tk.Button(elementos_para_tablero,text="CARGAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
+     cargar_juego.grid(row=2,column=6)
+     elementos_para_tablero.grid(row=4,column=4,padx=2,pady=2)
+     jugar_v.mainloop()
 
 #MENÚ:
 def menu():
