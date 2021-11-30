@@ -11,6 +11,7 @@ from random import randint
 from datetime import datetime
 import subprocess
 from functools import partial
+import pickle
 
 #VARIABLES:
 path="Manual de usuario.pdf" #AYUDA
@@ -173,6 +174,13 @@ mn=0
 sg=0
 w=0
 bandera_modifica_timer=0
+partidas_para_deshacer=[]
+f=0
+c=0
+pila_jugadas_hechas=[]
+pila_jugadas_eliminadas=[]
+bandera_activa_topx=0
+
 def nombre():
      """
      Funcionalidad: Valida que el nombre tenga entre 1 y 30 caracteres.
@@ -203,6 +211,7 @@ def activa_reloj():
      global mn
      global sg
      global reloj_time
+     global bandera_activa_topx
      sg+=1
      if sg==60:
           mn+=1
@@ -217,6 +226,8 @@ def activa_reloj():
      horas.config(text=hours)
      minutos.config(text=minutes)
      segundos.config(text=seconds)
+     if bandera_activa_topx==1:
+          messagebox.showinfo("Aviso"," Se acaba de desplegar el Top X")
      reloj_time=horas.after(1000,activa_reloj)
 
 def activa_timer():
@@ -238,6 +249,7 @@ def activa_timer():
      global hr
      global mn
      global sg
+     global bandera_activa_topx
      horas_get=int(horas_get)
      minutos_get=int(minutos_get)
      segundos_get=int(segundos_get)
@@ -276,6 +288,8 @@ def activa_timer():
                jugar_f()
           else:
                return activa_reloj()
+     if bandera_activa_topx==1:
+          messagebox.showinfo("Aviso"," Se acaba de desplegar el Top X")
      reloj_time=horas.after(1000,activa_timer)
 
 def terminar_juego_f():
@@ -286,11 +300,106 @@ def terminar_juego_f():
      if terminar==0:
           if bandera_inicio_juego==0:
                messagebox.showinfo("ERROR"," No se a iniciado el juego")
-          
      else:
           gane=2
           jugar_v.destroy()
           jugar_f()
+"""
+def guardar_partida_f():
+     global
+     guarda=open()
+"""
+def activa_bandera_topx():
+     global bandera_activa_topx
+     bandera_activa_topx=1
+     ########otra llamadaaaaaaaaaaaaaaaaaaaaa
+
+class Jugadas_hechas:
+     def __init__(self,fila,columna,elemento):
+          self.fila=fila
+          self.columna=columna
+          self.elemento=elemento
+     def obtener_jugada_hecha(self):
+          return self.fila,self.columna,self.elemento
+     def obtiene_fila_columna(self):
+          return self.fila,self.columna
+     def obtiene_valor(self):
+          return self.elemento
+
+def deshacer_partida_f():
+     global pila_jugadas_eliminadas
+     global pila_jugadas_hechas
+     global matriz_botones
+     global matriz_botones_2
+     global bandera_inicio_juego
+     if bandera_inicio_juego==1:
+          if len(pila_jugadas_hechas)==0:
+               messagebox.showinfo("ERROR"," No hay jugadas para deshacer")
+          elif len(pila_jugadas_hechas)==1:
+               ultima_jugada=pila_jugadas_hechas.pop()
+               partida_ultima=ultima_jugada.obtener_jugada_hecha()
+               matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0].config(text="")
+               matriz_botones_2[partida_ultima[0]][partida_ultima[1]]=(matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0],"")
+               je=Jugadas_eliminadas(ultima_jugada.fila,ultima_jugada.columna,ultima_jugada.elemento)
+               pila_jugadas_eliminadas.append(je)
+          else:
+               if len(pila_jugadas_hechas)>=2:
+                    mismo2=pila_jugadas_hechas[-2]
+                    mismo1=pila_jugadas_hechas[-1]
+                    ultima_jugada=pila_jugadas_hechas.pop()
+                    mismo_1=mismo1.obtiene_fila_columna()
+                    mismo_2=mismo2.obtiene_fila_columna()
+                    valor=mismo2.obtiene_valor()
+                    if mismo_1==mismo_2:
+                         partida_ultima=ultima_jugada.obtener_jugada_hecha()
+                         matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0].config(text=valor)
+                         matriz_botones_2[partida_ultima[0]][partida_ultima[1]]=(matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0],valor)
+                         je=Jugadas_eliminadas(ultima_jugada.fila,ultima_jugada.columna,ultima_jugada.elemento)
+                         pila_jugadas_eliminadas.append(je)
+                    else:
+                         partida_ultima=ultima_jugada.obtener_jugada_hecha()
+                         matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0].config(text="")
+                         matriz_botones_2[partida_ultima[0]][partida_ultima[1]]=(matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0],"")
+                         je=Jugadas_eliminadas(ultima_jugada.fila,ultima_jugada.columna,ultima_jugada.elemento)
+                         pila_jugadas_eliminadas.append(je)
+     else:
+          messagebox.showinfo("ERROR"," No se ha iniciado el juego")
+
+class Jugadas_eliminadas:
+     def __init__(self, fila, columna, elemento):
+          self.fila=fila
+          self.columna=columna
+          self.elemento=elemento
+     def obtener_jugada_eliminada(self):
+          return self.fila,self.columna,self.elemento
+     def obtiene_fila(self):
+          return self.fila
+     def obtiene_columna(self):
+          return self.columna
+     def obtiene_valor(self):
+          return self.elemento
+def rehacer_partida_f():
+     global matriz_botones
+     global matriz_botones_2
+     global pila_jugadas_eliminadas
+     global bandera_inicio_juego
+     if bandera_inicio_juego==1:
+          if len(pila_jugadas_eliminadas)==0:
+               messagebox.showinfo("ERROR"," No hay jugadas para rehacer")
+          else:
+               mismo1=pila_jugadas_eliminadas[-1]
+               ultima_jugada=pila_jugadas_eliminadas.pop()
+               partida_ultima=ultima_jugada.obtener_jugada_eliminada()
+               fil=mismo1.obtiene_fila()
+               col=mismo1.obtiene_columna()
+               valor=mismo1.obtiene_valor()
+               matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0].config(text=valor)
+               matriz_botones_2[partida_ultima[0]][partida_ultima[1]]=(matriz_botones_2[partida_ultima[0]][partida_ultima[1]][0],valor)
+               jo=Jugadas_hechas(fil,col,valor)
+               pila_jugadas_hechas.append(jo)
+     else:
+          messagebox.showinfo("ERROR"," No se ha iniciado el juego")
+
 def configurar_v():
      """
      Funcionalidad: Despliega la ventana para hacer la configuarción.
@@ -655,6 +764,11 @@ def asigna_valor(x,y):
      global gane
      global w
      global bandera_boton_picado
+     global f
+     global c
+     global pila_jugadas_hechas
+     global lista_mismos
+     global valor
      bandera_validacion=0
      if matriz_botones[x][y] in elementos_fijos:
           bandera_validacion=1
@@ -731,8 +845,12 @@ def asigna_valor(x,y):
                if w==0:
                     matriz_botones[x][y].config(text=str(elemento_agregar))
                     matriz_botones_2[i][j]=(matriz_botones_2[i][j][0],str(elemento_agregar))
-                    elemento_agregar=0
                     bandera_boton_picado.config(bg="turquoise")
+                    f=i
+                    c=j
+                    jo=Jugadas_hechas(f,c,elemento_agregar)
+                    pila_jugadas_hechas.append(jo)
+                    elemento_agregar=0
                     for fila in  matriz_botones_2:
                          for boton in fila:
                               if boton[1]=="":
@@ -919,12 +1037,12 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=0,column=1)
 
-     deshacer_jugada=tk.Button(elementos_para_tablero,text=" DESHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:nueva_p(cuadricula,pares))
+     deshacer_jugada=tk.Button(elementos_para_tablero,text=" DESHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10),command=lambda:deshacer_partida_f())
      deshacer_jugada.grid(row=0,column=2)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=0,column=3)
 
-     rehacer_jugada=tk.Button(elementos_para_tablero,text=" REHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10))#,command=lambda:sal())
+     rehacer_jugada=tk.Button(elementos_para_tablero,text=" REHACER \n JUGADA",bg="sky blue",height=2,font=("Arial Black",10),command=lambda:rehacer_partida_f())
      rehacer_jugada.grid(row=0,column=4)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=0,column=5)
@@ -934,7 +1052,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=1,column=0)
 
-     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10))
+     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10),command=lambda:activa_bandera_topx())
      top_x.grid(row=2,column=0)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=1)
