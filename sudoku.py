@@ -281,6 +281,7 @@ def activa_timer():
 def terminar_juego_f():
      global gane
      global jugar_v
+     global bandera_inicio_juego
      terminar=messagebox.askyesno("Terminar"," ¿Está seguro de terminar el juego?")
      if terminar==0:
           if bandera_inicio_juego==0:
@@ -515,7 +516,19 @@ def configurar_v():
      aceptar=tk.Button(configura,text="Aceptar",bg="alice blue",font=("Arial Black",8),command=lambda:validaciones_configuracion())
      aceptar.grid(row=10,column=3)
      configura.mainloop()
-
+def borrar_juego_f():
+     global elementos_fijos
+     global matriz_botones_2
+     global bandera_inincio_juego
+     borrar=messagebox.askyesno("Borrar"," ¿Está seguro de borrar el juego?")
+     if borrar==0:
+          if bandera_inicio_juego==0:
+               messagebox.showinfo("ERROR"," No se a iniciado el juego")
+     else:
+          for indice,lista in enumerate(matriz_botones_2):
+               for indice1,boton in enumerate(lista):
+                    if not boton[0] in elementos_fijos:
+                         boton[0].config(text="")
 def inicio_f():
      global partidas_faciles
      global partidas_medias
@@ -926,7 +939,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=1)
 
-     borrar_juego=tk.Button(elementos_para_tablero,text=" BORRAR \n JUEGO",bg="salmon1",height=2,font=("Arial Black",10))#,command=lambda:salirr())
+     borrar_juego=tk.Button(elementos_para_tablero,text=" BORRAR \n JUEGO",bg="salmon1",height=2,font=("Arial Black",10),command=lambda:borrar_juego_f())
      borrar_juego.grid(row=2,column=2)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=3)
