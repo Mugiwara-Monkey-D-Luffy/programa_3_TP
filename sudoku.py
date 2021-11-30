@@ -172,6 +172,7 @@ hr=0
 mn=0
 sg=0
 w=0
+bandera_modifica_timer=0
 def nombre():
      """
      Funcionalidad: Valida que el nombre tenga entre 1 y 30 caracteres.
@@ -197,12 +198,11 @@ def activa_reloj():
      global minutos
      global segundos
      global ventana_para_reloj
+     global ventana_para_timer
      global hr
      global mn
      global sg
-     #global bandera_gane
      global reloj_time
-     #global pares
      sg+=1
      if sg==60:
           mn+=1
@@ -211,22 +211,12 @@ def activa_reloj():
           hr+=1
           mn=0
      x="0"
-     #ptop10=horas_+":"+minutos_+":"+segundos_
      hours=f"{hr}" if hr>9 else f"0{hr}"
      minutes=f"{mn}" if mn>9 else f"0{mn}"
      seconds=f"{sg}" if sg>9 else f"0{sg}"
      horas.config(text=hours)
      minutos.config(text=minutes)
      segundos.config(text=seconds)
-     #relojito=tk.Label(ventana1,text=hours+"              :              "+minutes+"              :              "+seconds,bg="azure",width=41,font=("Arial Black",10))
-     #relojito.grid(row=9,column=2)
-##     if bandera_gane==1:
-##          relojito.after_cancel(reloj_time)
-##          showMessage("¡Gananaste!"," FELICIDADES")
-##          ventana1.destroy()
-##          pares=[]
-##          bandera_gane=0
-##          jugar()
      reloj_time=horas.after(1000,activa_reloj)
 
 def activa_timer():
@@ -236,56 +226,70 @@ def activa_timer():
      Restricciones: El usuario en la configuración tuvo que haber seleccionado la opción en la configuración.
      Salidas: Crea el timer y lo pone en la ventana de juego.
      """
-     global horas_1
-     global minutos_1
-     global segundos_1
-     horas_1=int(horas_1)
-     minutos_1=int(minutos_1)
-     segundos_1=int(segundos_1)
-     segundos_1-=1
-     if segundos_1<=0 and minutos_1>0:
-          minutos_1-=1
-          if minutos_1>=0:
-               segundos_1=59
+     global horas_get
+     global minutos_get
+     global segundos_get
+     global horas
+     global minutos
+     global segundos
+     global ventana_para_timer
+     global bandera_modifica_timer
+     global jugar_v
+     global hr
+     global mn
+     global sg
+     horas_get=int(horas_get)
+     minutos_get=int(minutos_get)
+     segundos_get=int(segundos_get)
+     segundos_get-=1
+     if segundos_get<=0 and minutos_get>0:
+          minutos_get-=1
+          if minutos_get>=0:
+               segundos_get=59
           else:
-               segundos_1=0
-     if minutos_1==0 and horas_1>0:
-          horas_1-=1
-          if horas_1>=0:
-               minutos_1=59
+               segundos_get=0
+     if minutos_get==0 and horas_get>0:
+          horas_get-=get
+          if horas_get>=0:
+               minutos_get=59
           else:
                minutos_1=0
-     hours=f"{horas_1}" if horas_1>9 else f"{horas_1}"
-     minutes=f"{minutos_1}" if minutos_1>9 else f"{minutos_1}"
-     seconds=f"{segundos_1}" if segundos_1>9 else f"{segundos_1}"
-          
-     ventana_x=tk.Frame(ventana1,bg="AntiqueWhite1",height=200,width=200)
-     reloj=tk.Label(ventana_x,text="Timer",font=("Arial Black",10),bg="cyan",width=13)
-     reloj.grid(row=0,column=0)
-            
-     h=tk.Label(ventana_x,text="Horas",font=("Arial Black",10),bg="green4",width=13)
-     h.grid(row=1,column=0)
-     m=tk.Label(ventana_x,text="Minutos",font=("Arial Black",10),bg="green2",width=13)
-     m.grid(row=1,column=1)
-     s=tk.Label(ventana_x,text="Segundos",font=("Arial Black",10),bg="green4",width=13)
-     ventana_x.grid(row=8,column=2)
-     s.grid(row=1,column=2)
-     x=tk.Label(ventana1,text=hours+"              :              "+minutes+"              :              "+seconds,bg="azure",width=41,font=("Arial Black",10))
-     x.grid(row=10,column=2)
-     if horas_1==0 and minutos_1==0 and segundos_1==0:
-          messagebox.showinfo("Game Over"," El tiempo se a expirado")
-          ventana1.destroy()
-          jugar()
-     reloj_time=x.after(1000,activa_timer)
+     hours=f"{horas_get}" if horas_get>9 else f"{horas_get}"
+     minutes=f"{minutos_get}" if minutos_get>9 else f"{minutos_get}"
+     seconds=f"{segundos_get}" if segundos_get>9 else f"{segundos_get}"
+     if bandera_modifica_timer==0:
+          bandera_modifica_timer=1
+          horas=tk.Label(ventana_para_timer,text=hours,font=("Arial Black",10),bg="azure",width=13)
+          horas.grid(row=2,column=0)
+          minutos=tk.Label(ventana_para_timer,text=minutes,font=("Arial Black",10),bg="azure",width=13)
+          minutos.grid(row=2,column=1)
+          segundos=tk.Label(ventana_para_timer,text=seconds,font=("Arial Black",10),bg="azure",width=13)
+          segundos.grid(row=2,column=2)
+     else:
+          horas.config(text=hours)
+          minutos.config(text=minutes)
+          segundos.config(text=seconds)
+     if horas_get==0 and minutos_get==0 and segundos_get==0:
+          game_over=messagebox.askyesno("Tiempo Expirado"," ¿Desea continuar el mismo juego?")
+          if game_over==0:
+               jugar_v.destroy()
+               jugar_f()
+          else:
+               return activa_reloj()
+     reloj_time=horas.after(1000,activa_timer)
 
 def terminar_juego_f():
+     global gane
+     global jugar_v
      terminar=messagebox.askyesno("Terminar"," ¿Está seguro de terminar el juego?")
      if terminar==0:
           if bandera_inicio_juego==0:
                messagebox.showinfo("ERROR"," No se a iniciado el juego")
           
-     #else:
-          #llama_funcion_inicio************
+     else:
+          gane=2
+          jugar_v.destroy()
+          jugar_f()
 def configurar_v():
      """
      Funcionalidad: Despliega la ventana para hacer la configuarción.
@@ -527,73 +531,109 @@ def inicio_f():
      global bandera_letras
      global elementos_fijos
      global bandera_inicio_juego
-     iniciar_juego.config(state="disabled")
-     bandera_inicio_juego=1
-     cantidad_de_partidas_faciles=len(partidas_faciles)
-     cantidad_de_partidas_medias=len(partidas_medias)
-     cantidad_de_partidas_dificiles=len(partidas_dificiles)
-     if bandera_nivel_facil==1:
-          llave_partida_facil=randint(1,cantidad_de_partidas_faciles)
-          partida=partidas_faciles[llave_partida_facil]
-     elif bandera_nivel_medio==1:
-          llave_partida_media=randint(1,cantidad_de_partidas_medias)
-          partida=partidas_medias[llave_partida_media]
-     else:
-          llave_partida_dificil=randint(1,cantidad_de_partidas_dificiles)
-          partida=partidas_dificiles[llave_partida_dificil]
-     for indice,lista in enumerate(matriz_botones_2):
-          for indice1,boton in enumerate(lista):
-               if partida[indice][indice1]!="":
-                    if bandera_letras==1:
-                         if partida[indice][indice1]=="1":
-                              texto="A"
-                         elif partida[indice][indice1]=="2":
-                              texto="B"
-                         elif partida[indice][indice1]=="3":
-                              texto="C"
-                         elif partida[indice][indice1]=="4":
-                              texto="D"
-                         elif partida[indice][indice1]=="5":
-                              texto="E"
-                         elif partida[indice][indice1]=="6":
-                              texto="F"
-                         elif partida[indice][indice1]=="7":
-                              texto="G"
-                         elif partida[indice][indice1]=="8":
-                              texto="H"
-                         else:
-                              texto="I"
-                         matriz_botones_2[indice][indice1][0].config(text=texto)
-                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
-                    elif bandera_simbolos==1:
-                         if partida[indice][indice1]=="1":
-                              texto="#"
-                         elif partida[indice][indice1]=="2":
-                              texto="*"
-                         elif partida[indice][indice1]=="3":
-                              texto="&"
-                         elif partida[indice][indice1]=="4":
-                              texto="%"
-                         elif partida[indice][indice1]=="5":
-                              texto="°"
-                         elif partida[indice][indice1]=="6":
-                              texto="$"
-                         elif partida[indice][indice1]=="7":
-                              texto="+"
-                         elif partida[indice][indice1]=="8":
-                              texto="-"
-                         else:
-                              texto="/"
-                         matriz_botones_2[indice][indice1][0].config(text=texto)
-                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
-                    else:
-                         matriz_botones_2[indice][indice1][0].config(text=partida[indice][indice1])
-                         matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],partida[indice][indice1])
-                    elementos_fijos.append(matriz_botones_2[indice][indice1][0])
+     global horas
+     global minutos
+     global segundos
+     global horas_1
+     global minutos_1
+     global segundos_1
+     global horas_get
+     global minutos_get
+     global segundos_get
+     global hr
+     global mn
+     global sg
      if bandera_timer==1:
-          activa_timer()
+          horas_get=horas.get()
+          minutos_get=minutos.get()
+          segundos_get=segundos.get()
+          hr=int(horas.get())
+          mn=int(minutos.get())
+          sg=int(segundos.get())
+          if horas_get=="" or minutos_get=="" or segundos_get=="":
+               messagebox.showinfo("Error"," Al menos uno de las casillas debe de ser llenada")
+          elif int(horas_get)==0 and int(minutos_get)==0 and int(segundos_get)==0:
+               messagebox.showinfo("Error"," Al menos uno de las casillas debe de ser llenada")
+          elif int(horas_get)<0 or int(horas_get)>4:
+               messagebox.showinfo("Error"," La cantidad de horas debe de estar entre 0 y 4")
+          elif int(minutos_get)<0 or int(minutos_get)>59:
+               messagebox.showinfo("Error"," La cantidad de minutos deben de estar entre 0 y 59")
+          elif int(segundos_get)<0 or int(segundos_get)>59:
+               messagebox.showinfo("Error"," La cantidad de segundos deben de estar entre 0 y 59")
+          else:
+               bandera_inicio_juego=1
      else:
-          activa_reloj()
+          bandera_inicio_juego=1
+     if bandera_inicio_juego==1:
+          cantidad_de_partidas_faciles=len(partidas_faciles)
+          cantidad_de_partidas_medias=len(partidas_medias)
+          cantidad_de_partidas_dificiles=len(partidas_dificiles)
+          if bandera_nivel_facil==1:
+               llave_partida_facil=randint(1,cantidad_de_partidas_faciles)
+               partida=partidas_faciles[llave_partida_facil]
+          elif bandera_nivel_medio==1:
+               llave_partida_media=randint(1,cantidad_de_partidas_medias)
+               partida=partidas_medias[llave_partida_media]
+          else:
+               llave_partida_dificil=randint(1,cantidad_de_partidas_dificiles)
+               partida=partidas_dificiles[llave_partida_dificil]
+          for indice,lista in enumerate(matriz_botones_2):
+               for indice1,boton in enumerate(lista):
+                    if partida[indice][indice1]!="":
+                         if bandera_letras==1:
+                              if partida[indice][indice1]=="1":
+                                   texto="A"
+                              elif partida[indice][indice1]=="2":
+                                   texto="B"
+                              elif partida[indice][indice1]=="3":
+                                   texto="C"
+                              elif partida[indice][indice1]=="4":
+                                   texto="D"
+                              elif partida[indice][indice1]=="5":
+                                   texto="E"
+                              elif partida[indice][indice1]=="6":
+                                   texto="F"
+                              elif partida[indice][indice1]=="7":
+                                   texto="G"
+                              elif partida[indice][indice1]=="8":
+                                   texto="H"
+                              else:
+                                   texto="I"
+                              matriz_botones_2[indice][indice1][0].config(text=texto)
+                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                         elif bandera_simbolos==1:
+                              if partida[indice][indice1]=="1":
+                                   texto="#"
+                              elif partida[indice][indice1]=="2":
+                                   texto="*"
+                              elif partida[indice][indice1]=="3":
+                                   texto="&"
+                              elif partida[indice][indice1]=="4":
+                                   texto="%"
+                              elif partida[indice][indice1]=="5":
+                                   texto="°"
+                              elif partida[indice][indice1]=="6":
+                                   texto="$"
+                              elif partida[indice][indice1]=="7":
+                                   texto="+"
+                              elif partida[indice][indice1]=="8":
+                                   texto="-"
+                              else:
+                                   texto="/"
+                              matriz_botones_2[indice][indice1][0].config(text=texto)
+                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                         else:
+                              matriz_botones_2[indice][indice1][0].config(text=partida[indice][indice1])
+                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],partida[indice][indice1])
+                         elementos_fijos.append(matriz_botones_2[indice][indice1][0])
+          if bandera_timer==1:
+               iniciar_juego.config(state="disabled")
+               activa_timer()
+          elif bandera_reloj==1:
+               iniciar_juego.config(state="disabled")
+               activa_reloj()
+          else:
+               iniciar_juego.config(state="disabled")
 def asigna_valor(x,y):
      global matriz_botones
      global matriz_botones_2
@@ -729,10 +769,12 @@ def jugar_f():
      global hr
      global mn
      global sg
+     global ventana_para_timer
+     global bandera_timer
+     global bandera_reloj
      if gane!=2:
           menu_p.destroy()
      if gane==2:
-          #jugar_v.destroy()
           gane=1
           bandera_boton_picado=0
           bandera_inicio_juego=0
@@ -742,6 +784,8 @@ def jugar_f():
           hr=0
           mn=0
           sg=0
+          w=0
+          bandera_modifica_timer=0
      jugar_v=tk.Tk()
      jugar_v.iconbitmap("x.ico")
      jugar_v.title("SUDOKU")
