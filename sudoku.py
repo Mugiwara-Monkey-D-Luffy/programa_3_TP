@@ -18,94 +18,6 @@ from fpdf import FPDF
 #VARIABLES:
 path="manual_de_usuario_sudoku.pdf" #AYUDA
 path1="Top X.pdf" #TOP X
-##partidas_predefinidas_faciles={1:[["5","3","","","7","","","",""],
-##                                  ["6","","","1","9","5","","",""],
-##                                  ["","9","8","","","","","6",""],
-##                                  ["8","","","","6","","","","3"],
-##                                  ["4","","","8","","3","","","1"],
-##                                  ["7","","","","2","","","","6"],
-##                                  ["","6","","","","","2","8",""],
-##                                  ["","","","4","1","9","","","5"],
-##                                  ["","","","","8","","","7","9"]],
-##                               2:[["","","","1","","","3","",""],
-##                                  ["4","6","","","9","7","","",""],
-##                                  ["1","","9","","","","","6",""],
-##                                  ["","7","","","","","","3","8"],
-##                                  ["9","","8","7","3","5","","2","6"],
-##                                  ["2","3","4","6","","9","","5","1"],
-##                                  ["","","2","","1","3","6","",""],
-##                                  ["","4","","","","","","9",""],
-##                                  ["","","","9","","8","2","7",""]],
-##                               3:[["","8","4","","","2","","3",""],
-##                                  ["2","","7","8","3","1","","","9"],
-##                                  ["","1","","5","","","","2","7"],
-##                                  ["","7","8","","1","","9","","2"],
-##                                  ["","","9","7","6","","","8","5"],
-##                                  ["5","","1","9","","","3","",""],
-##                                  ["","3","","1","","7","4","","6"],
-##                                  ["","","5","2","","","","",""],
-##                                  ["7","","","3","9","","","",""]]}
-##partidas_predefinidas_medias={1:[["3","","","","","","","2",""],
-##                                  ["","8","","4","3","2","","1",""],
-##                                  ["","5","","","","","6","",""],
-##                                  ["","7","4","8","6","","","",""],
-##                                  ["","3","","1","","","7","",""],
-##                                  ["","","","2","9","6","8","7","1"],
-##                                  ["6","","","","","","3","4",""],
-##                                  ["","","","4","1","9","","","5"],
-##                                  ["1","9","","7","","","","","6"]],
-##                               2:[["","","7","4","1","5","","",""],
-##                                  ["","","","","","","7","","5"],
-##                                  ["4","9","2","","","3","8","","5"],
-##                                  ["","2","","","","","","4",""],
-##                                  ["","","4","","","6","1","",""],
-##                                  ["1","","9","","","","","7","3"],
-##                                  ["","","","","7","","","","1"],
-##                                  ["","","","8","","","","","9"],
-##                                  ["6","","1","5","4","","","","7"]],
-##                               3:[["","","8","9","","3","7","","4"],
-##                                  ["","","2","","","","","","9"],
-##                                  ["","","7","","5","","","8",""],
-##                                  ["2","","","","","8","4","",""],
-##                                  ["","","4","","","","8","9",""],
-##                                  ["6","","","4","","","","","1"],
-##                                  ["4","","","","","","6","","2"],
-##                                  ["","5","1","7","2","","9","",""],
-##                                  ["9","","","","","5","1","",""]]}
-##partidas_predefinidas_dificiles={1:[["","","","","4","","6","1",""],
-##                                  ["6","","","","","","","",""],
-##                                  ["5","","1","","","2","","8","4"],
-##                                  ["","9","","","","7","","","2"],
-##                                  ["","","","","8","","","",""],
-##                                  ["2","1","","3","","6","7","",""],
-##                                  ["1","","5","","6","3","4","",""],
-##                                  ["9","6","","","1","5","","",""],
-##                                  ["3","","","","","","","",""]],
-##                               2:[["","","5","","","","","",""],
-##                                  ["","6","2","","","","","3",""],
-##                                  ["3","7","","","2","","","",""],
-##                                  ["","","","2","","","","",""],
-##                                  ["","1","8","","9","","5","","4"],
-##                                  ["4","","6","","","","","8",""],
-##                                  ["","3","","6","","","","9",""],
-##                                  ["","","","","","","","2",""],
-##                                  ["","","7","5","","9","3","6",""]],
-##                               3:[["","3","","6","","2","9","",""],
-##                                  ["","","","5","","9","","",""],
-##                                  ["","4","9","","3","","2","",""],
-##                                  ["","","","","","","","9","6"],
-##                                  ["","","9","7","6","","","8","5"],
-##                                  ["","","2","","1","5","","","8"],
-##                                  ["","3","","1","","7","4","","6"],
-##                                  ["1","","","","","","4","2",""],
-##                                  ["","7","","","2","","","6",""]]}
-##partidas_predefinidas=open("sudoku2021partidas.dat","w")
-##partidas_predefinidas.write(str(partidas_predefinidas_faciles))
-##partidas_predefinidas.write("\n")
-##partidas_predefinidas.write(str(partidas_predefinidas_medias))
-##partidas_predefinidas.write("\n")
-##partidas_predefinidas.write(str(partidas_predefinidas_dificiles))
-##partidas_predefinidas.close()
 partidas_predefinidas=open("sudoku2021partidas.dat","r")
 texto=partidas_predefinidas.read()
 partidas_faciles={}
@@ -186,6 +98,7 @@ bandera_activa_topx=0
 lista_top_x=[]
 partidas_top_x=0
 pdf1=FPDF()
+bandera_juego_guardado=0
 
 def nombre():
      """
@@ -327,35 +240,94 @@ def guardar_partida_f():
      global bandera_numeros
      global banadera_letras
      global bandera_simbolos
-     guarda=open("sudoku2021juegoactual.dat","wb")
-     pickle.dump(nom,guarda)
-     if bandera_timer==1:
-          pickle.dump(horas_get,guarda)
-          pickle.dump(minutos_get,guarda)
-          pickle.dump(segundos_get,guarda)
+     global elementos_fijos
+     global bandera_inicio_juego
+     if bandera_inicio_juego==1:
+          guarda=open("sudoku2021juegoactual.dat","wb")
+          pickle.dump(nom,guarda)
+          if bandera_timer==1:
+               pickle.dump(horas_get,guarda)
+               pickle.dump(minutos_get,guarda)
+               pickle.dump(segundos_get,guarda)
+               pickle.dump(1,guarda)
+          else:
+               pickle.dump(hr,guarda)
+               pickle.dump(mn,guarda)
+               pickle.dump(sg,guarda)
+               pickle.dump(0,guarda)
+          pickle.dump(partidas_top_x,guarda)
+          if bandera_simbolos==1:
+               pickle.dump(2,guarda)
+          elif bandera_letras==1:
+               pickle.dump(1,guarda)
+          else:
+               pickle.dump(0,guarda)
+          matriz_juego=[]
+          for indice,fila in enumerate(matriz_botones_2):
+               sub=[]
+               for indice1,boton in enumerate(fila):
+                    sub.append([indice,indice1,boton[1]])
+               if sub!=[]:
+                    matriz_juego.append(sub)
+          pickle.dump(matriz_juego,guarda)
+          lista_elementos_fijos=[]
+          for indice,fila in enumerate(matriz_botones_2):
+               for indice1,boton in enumerate(fila):
+                    for i in elementos_fijos:
+                         if i==boton[0]:
+                              lista_elementos_fijos.append([indice,indice1])
+          pickle.dump(lista_elementos_fijos,guarda)
+          guarda.close()
      else:
-          pickle.dump(hr,guarda)
-          pickle.dump(mn,guarda)
-          pickle.dump(sg,guarda)
-     pickle.dump(partidas_top_x,guarda)
-     if bandera_simbolos==1:
-          pickle.dump(2,guarda)
-     elif bandera_letras==1:
-          pickle.dump(1,guarda)
-     else:
-          pickle.dump(0,guarda)
-     matriz_juego=[]
-     for indice,fila in enumerate(matriz_botones_2):
-          sub=[]
-          for indice1,boton in enumerate(fila):
-               sub.append((indice,indice1,boton[1]))
-          matriz_juego.append(sub)
-     print(matriz_juego)
-     pickle.dump(matriz_juego,guarda)
-     guarda.close()
+          messagebox.showinfo("ERROR"," No se ha iniciado el juego")
 
-#def cargar_partida_f():
-     
+def cargar_partida_f():
+     global nom
+     global horas_get
+     global minutos_get
+     global segundos_get
+     global bandera_reloj
+     global bandera_timer
+     global partidas_top_x
+     global hr
+     global sg
+     global mn
+     global matriz_botones_2
+     global bandera_numeros
+     global banadera_letras
+     global bandera_simbolos
+     global bandera_juego_guardado
+     global lista_aux
+     global elementos_fijos
+     global bandera_inicio_juego
+     if bandera_inicio_juego==0:
+          bandera_juego_guardado=1
+          lista_aux=[]
+          abre=open("sudoku2021juegoactual.dat","rb")
+          try:
+               while True:
+                    pa=pickle.load(abre)
+                    lista_aux.append(pa)
+          except:
+               abre.close()
+               nom=lista_aux[0]
+               if lista_aux[4]==1:
+                    horas_get=lista_aux[1]
+                    minutos_get=lista_aux[2]
+                    segundos_get=lista_aux[3]
+               else:
+                    hr=lista_aux[1]
+                    mn=lista_aux[2]
+                    sg=lista_aux[3]
+               partidas_top_x=lista_aux[5]
+               if lista_aux[6]==2:
+                    bandera_simbolos=1
+               elif lista_aux[6]==1:
+                    banadera_letras=1
+               else:
+                    bandera_numeros=1
+     else:
+          messagebox.showinfo("ERROR"," Ya se ha iniciado el juego")
 
 def activa_bandera_topx():
      global bandera_activa_topx
@@ -515,6 +487,7 @@ def crea_topx():
                string=int(string)
                lista_top_x.append((pa,string))
      except:
+          abre.close()
           faciles=[]
           medias=[]
           dificiles=[]
@@ -839,6 +812,8 @@ def inicio_f():
      global hr
      global mn
      global sg
+     global lista_aux
+     global bandera_juego_guardado
      if bandera_timer==1:
           horas_get=horas.get()
           minutos_get=minutos.get()
@@ -896,7 +871,7 @@ def inicio_f():
                               else:
                                    texto="I"
                               matriz_botones_2[indice][indice1][0].config(text=texto)
-                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                              matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],texto]
                          elif bandera_simbolos==1:
                               if partida[indice][indice1]=="1":
                                    texto="#"
@@ -917,11 +892,21 @@ def inicio_f():
                               else:
                                    texto="/"
                               matriz_botones_2[indice][indice1][0].config(text=texto)
-                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],texto)
+                              matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],texto]
                          else:
                               matriz_botones_2[indice][indice1][0].config(text=partida[indice][indice1])
-                              matriz_botones_2[indice][indice1]=(matriz_botones_2[indice][indice1][0],partida[indice][indice1])
+                              matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],partida[indice][indice1]]
                          elementos_fijos.append(matriz_botones_2[indice][indice1][0])
+          if bandera_juego_guardado==1:
+               for indice,fila in enumerate(lista_aux[7]):
+                    for indice1,boton in enumerate(fila):
+                         matriz_botones_2[indice][indice1][0].config(text=boton[2])
+                         matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],boton[2]]
+               elementos_fijos=[]
+               for indice,fila in enumerate(matriz_botones_2):
+                    for indice1,boton in enumerate(fila):
+                         if [indice,indice1] in lista_aux[8]:
+                              elementos_fijos.append(matriz_botones_2[indice][indice1][0])
           if bandera_timer==1:
                iniciar_juego.config(state="disabled")
                activa_timer()
@@ -1124,7 +1109,7 @@ def jugar_f():
                     casilla=tk.Button(tablero_g,bg="lavender",activebackground="bisque",height=2,width=5,command=partial(asigna_valor,x,y))
                     casilla.grid(row=x,column=y,padx=2,pady=2)
                     fila_botones.append(casilla)
-                    fila_botones_2.append((casilla,""))
+                    fila_botones_2.append([casilla,""])
           if fila_botones_2!=[]:
                matriz_botones_2.append(fila_botones_2)
           matriz_botones.append(fila_botones)
