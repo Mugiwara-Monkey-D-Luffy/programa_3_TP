@@ -12,9 +12,12 @@ from datetime import datetime
 import subprocess
 from functools import partial
 import pickle
+from operator import itemgetter
+from fpdf import FPDF
 
 #VARIABLES:
-path="Manual de usuario.pdf" #AYUDA
+path="manual_de_usuario_sudoku.pdf" #AYUDA
+path1="Top X.pdf" #TOP X
 ##partidas_predefinidas_faciles={1:[["5","3","","","7","","","",""],
 ##                                  ["6","","","1","9","5","","",""],
 ##                                  ["","9","8","","","","","6",""],
@@ -180,6 +183,9 @@ c=0
 pila_jugadas_hechas=[]
 pila_jugadas_eliminadas=[]
 bandera_activa_topx=0
+lista_top_x=[]
+partidas_top_x=0
+pdf1=FPDF()
 
 def nombre():
      """
@@ -189,6 +195,7 @@ def nombre():
      Salidas: showMessage si el nombre del usuario no tiene entre 1 y 30 caracteres.
      """
      global nombre_j
+     global nom
      nom=nombre_j.get()
      if len(nom)>0 and len(nom)<30:
           inicio_f()
@@ -313,7 +320,7 @@ def activa_bandera_topx():
      global bandera_activa_topx
      bandera_activa_topx=1
      ########otra llamadaaaaaaaaaaaaaaaaaaaaa
-
+     
 class Jugadas_hechas:
      def __init__(self,fila,columna,elemento):
           self.fila=fila
@@ -400,6 +407,120 @@ def rehacer_partida_f():
      else:
           messagebox.showinfo("ERROR"," No se ha iniciado el juego")
 
+class Mejores_jugadores:
+     def __init__(self,nombre,horas,minutos,segundos,nivel):
+          self.nombre=nombre
+          self.horas=horas
+          self.minutos=minutos
+          self.segundos=segundos
+          self.nivel=nivel
+     def obtener_nombre(self):
+          return self.nombre
+     def obtener_horas(self):
+          return self.horas
+     def obtener_minutos(self):
+          return self.minutos
+     def obtener_segundos(self):
+          return self.segundos
+     def obtener_nivel(self):
+          return self.nivel
+     def obtiene_todos_valores(self):
+          return self.nombre,self.horas,self.minutos,self.segundos,self.nivel
+
+def crea_topx():
+     global nom
+     global horas_get
+     global minutos_get
+     global segundos_get
+     global bandera_nivel_facil
+     global bandera_nivel_medio
+     global bandera_nivel_dificil
+     global bandera_reloj
+     global bandera_timer
+     global lista_top_x
+     global partidas_top_x
+     if bandera_reloj==1:
+          h=hr
+          s=sg
+          m=mn
+     elif bandera_timer==1:
+          h=horas_get
+          s=segundos_get
+          m=minutos_get
+     else:
+          return
+     if bandera_nivel_facil==1:
+          n=0
+     if bandera_nivel_medio==1:
+          n=1
+     if bandera_nivel_dificil==1:
+          n=2
+     wo=Mejores_jugadores(nom,h,m,s,n)
+     lista_top_x.append(wo)
+     for i in lista_top_x:
+          añade=i.obtiene_todos_valores()
+          abre=open("sudoku2021topx.dat","ab")
+          pickle.dump(añade,abre)
+     abre.close()
+     abre=open("sudoku2021topx.dat","rb")
+     lista_top_x=[]
+     try:
+          while True:
+               pa=pickle.load(abre)
+               string=str(pa[1])+str(pa[2])+str(pa[3])
+               string=int(string)
+               lista_top_x.append((pa,string))
+     except:
+          faciles=[]
+          medias=[]
+          dificiles=[]
+          for i in lista_top_x:
+               if i[0][4]==0:
+                    faciles.append(i)
+               if i[0][4]==1:
+                    medias.append(i)
+               if i[0][4]==2:
+                    dificiles.append(i)
+          faciles=sorted(faciles,key=itemgetter(1))
+          medias=sorted(medias,key=itemgetter(1))
+          dificiles=sorted(dificiles,key=itemgetter(1))
+          if partidas_top_x!=0:
+               faciles=faciles[1:int(partidas_top_x)+1]
+               medias=medias[1:int(partidas_top_x)+1]
+               dificiles=dificiles[1:int(partidas_top_x)+1]
+     #Se crea el pdf:
+     pdf1.add_page()
+     pdf1.set_font("Arial",size=16)
+     pdf1.cell(0,5,"TOP X",0,1)
+     pdf1.cell(0,5,"",0,1)
+     pdf1.cell(0,5,"NIVEL DIFÍCIL:                JUGADOR                         TIEMPO",0,1)
+     for i in dificiles:
+          name=str(i[0][0])
+          horas=str(i[0][1])
+          minutos=str(i[0][2])
+          segundos=str(i[0][3])
+          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          pdf1.cell(0,5,todo,0,1)
+     pdf1.cell(0,5,"",0,1)
+     pdf1.cell(0,5,"NIVEL INTERMEDIO:",0,1)
+     for i in medias:
+          name=str(i[0][0])
+          horas=str(i[0][1])
+          minutos=str(i[0][2])
+          segundos=str(i[0][3])
+          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          pdf1.cell(0,5,todo,0,1)
+     pdf1.cell(0,5,"",0,1)
+     pdf1.cell(0,5,"NIVEL FACIL:",0,1)
+     for i in faciles:
+          name=str(i[0][0])
+          horas=str(i[0][1])
+          minutos=str(i[0][2])
+          segundos=str(i[0][3])
+          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          pdf1.cell(0,5,todo,0,1)
+     pdf1.output("Top X.pdf")
+     
 def configurar_v():
      """
      Funcionalidad: Despliega la ventana para hacer la configuarción.
@@ -424,6 +545,7 @@ def configurar_v():
      global bandera_letras
      global bandera_simbolos
      global bandera_pasa_configuracion
+     global partidas_top_x
      configura=tk.Tk()
      configura.iconbitmap("x.ico")
      configura.title("Configurar")
@@ -474,6 +596,7 @@ def configurar_v():
           global segundos_1
           global partidas_topx
           global bandera_pasa_configuracion
+          global partidas_top_x
           if bandera_timer==1:
                horas_1=horas1.get()
                minutos_1=minutos1.get()
@@ -609,6 +732,7 @@ def configurar_v():
      label_top_x.grid(row=6,column=0)
      partidas_topx=tk.Entry(configura,bg="azure")
      partidas_topx.grid(row=7,column=0)
+     partidas_topx_=partidas_topx.get()
      #Elementos para la Cuadrícula
      elementos_tablero=tk.Label(configura,text="4. Elementos para la Cuadrícula:",font=("Arial Black",10),bg="AntiqueWhite1")
      elementos_tablero.grid(row=8,column=0)
@@ -854,11 +978,11 @@ def asigna_valor(x,y):
                     for fila in  matriz_botones_2:
                          for boton in fila:
                               if boton[1]=="":
-                                   gane=0
+                                   gane=1
                     if gane==1:
                          gane=2
                          messagebox.showinfo("Gane"," ¡EXELENTE! \n JUEGO COMPLETADO")
-                         #llama a función para top x**************************************
+                         crea_topx()
                          jugar_v.destroy()
                          jugar_f()
      w=0
@@ -1052,7 +1176,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=1,column=0)
 
-     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10),command=lambda:activa_bandera_topx())
+     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10),command=lambda:subprocess.Popen([path1],shell=True))
      top_x.grid(row=2,column=0)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=1)
