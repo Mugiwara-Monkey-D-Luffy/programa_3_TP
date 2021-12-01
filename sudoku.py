@@ -311,11 +311,52 @@ def terminar_juego_f():
           gane=2
           jugar_v.destroy()
           jugar_f()
-"""
+
 def guardar_partida_f():
-     global
-     guarda=open()
-"""
+     global nom
+     global horas_get
+     global minutos_get
+     global segundos_get
+     global bandera_reloj
+     global bandera_timer
+     global partidas_top_x
+     global hr
+     global sg
+     global mn
+     global matriz_botones_2
+     global bandera_numeros
+     global banadera_letras
+     global bandera_simbolos
+     guarda=open("sudoku2021juegoactual.dat","wb")
+     pickle.dump(nom,guarda)
+     if bandera_timer==1:
+          pickle.dump(horas_get,guarda)
+          pickle.dump(minutos_get,guarda)
+          pickle.dump(segundos_get,guarda)
+     else:
+          pickle.dump(hr,guarda)
+          pickle.dump(mn,guarda)
+          pickle.dump(sg,guarda)
+     pickle.dump(partidas_top_x,guarda)
+     if bandera_simbolos==1:
+          pickle.dump(2,guarda)
+     elif bandera_letras==1:
+          pickle.dump(1,guarda)
+     else:
+          pickle.dump(0,guarda)
+     matriz_juego=[]
+     for indice,fila in enumerate(matriz_botones_2):
+          sub=[]
+          for indice1,boton in enumerate(fila):
+               sub.append((indice,indice1,boton[1]))
+          matriz_juego.append(sub)
+     print(matriz_juego)
+     pickle.dump(matriz_juego,guarda)
+     guarda.close()
+
+#def cargar_partida_f():
+     
+
 def activa_bandera_topx():
      global bandera_activa_topx
      bandera_activa_topx=1
@@ -439,6 +480,9 @@ def crea_topx():
      global bandera_timer
      global lista_top_x
      global partidas_top_x
+     global hr
+     global sg
+     global mn
      if bandera_reloj==1:
           h=hr
           s=sg
@@ -984,7 +1028,7 @@ def asigna_valor(x,y):
                     for fila in  matriz_botones_2:
                          for boton in fila:
                               if boton[1]=="":
-                                   gane=1
+                                   gane=0
                     if gane==1:
                          gane=2
                          messagebox.showinfo("Gane"," ¡EXELENTE! \n JUEGO COMPLETADO")
@@ -1177,7 +1221,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=0,column=5)
 
-     guardar_juego=tk.Button(elementos_para_tablero,text="GUARDAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
+     guardar_juego=tk.Button(elementos_para_tablero,text="GUARDAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8),command=lambda:guardar_partida_f())
      guardar_juego.grid(row=0,column=6)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=1,column=0)
@@ -1197,7 +1241,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=5)
 
-     cargar_juego=tk.Button(elementos_para_tablero,text="CARGAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8))
+     cargar_juego=tk.Button(elementos_para_tablero,text="CARGAR \n JUEGO",bg="pale green",height=2,font=("Arial Black",8),command=lambda:cargar_partida_f())
      cargar_juego.grid(row=2,column=6)
      elementos_para_tablero.grid(row=4,column=4,padx=2,pady=2)
      jugar_v.mainloop()
