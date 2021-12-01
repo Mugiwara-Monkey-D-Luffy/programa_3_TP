@@ -499,7 +499,9 @@ def crea_topx():
           horas=str(i[0][1])
           minutos=str(i[0][2])
           segundos=str(i[0][3])
-          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          tiempo=horas+":"+minutos+":"+segundos
+          todo="{:>30}{:>40}".format("                                            "+name,tiempo)
+          #todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
           pdf1.cell(0,5,todo,0,1)
      pdf1.cell(0,5,"",0,1)
      pdf1.cell(0,5,"NIVEL INTERMEDIO:",0,1)
@@ -508,7 +510,9 @@ def crea_topx():
           horas=str(i[0][1])
           minutos=str(i[0][2])
           segundos=str(i[0][3])
-          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          tiempo=horas+":"+minutos+":"+segundos
+          todo="{:>30}{:>40}".format("                                            "+name,tiempo)
+          #todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
           pdf1.cell(0,5,todo,0,1)
      pdf1.cell(0,5,"",0,1)
      pdf1.cell(0,5,"NIVEL FACIL:",0,1)
@@ -517,7 +521,9 @@ def crea_topx():
           horas=str(i[0][1])
           minutos=str(i[0][2])
           segundos=str(i[0][3])
-          todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
+          tiempo=horas+":"+minutos+":"+segundos
+          todo="{:>30}{:>40}".format("                                            "+name,tiempo)
+          #todo="                                            "+name+"                                                   "+horas+":"+minutos+":"+segundos
           pdf1.cell(0,5,todo,0,1)
      pdf1.output("Top X.pdf")
      
