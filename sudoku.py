@@ -77,7 +77,7 @@ bandera_numeros=1
 bandera_letras=0
 bandera_simbolos=0
 bandera_pasa_configuracion=0
-
+pdf1=FPDF()
 gane=1
 bandera_boton_picado=0
 bandera_inicio_juego=0
@@ -97,7 +97,6 @@ pila_jugadas_eliminadas=[]
 bandera_activa_topx=0
 lista_top_x=[]
 partidas_top_x=0
-pdf1=FPDF()
 bandera_juego_guardado=0
 
 def nombre():
@@ -110,6 +109,8 @@ def nombre():
      global nombre_j
      global nom
      nom=nombre_j.get()
+     if bandera_juego_guardado==1:
+          nom="x"
      if len(nom)>0 and len(nom)<30:
           inicio_f()
      else:
@@ -147,7 +148,9 @@ def activa_reloj():
      minutos.config(text=minutes)
      segundos.config(text=seconds)
      if bandera_activa_topx==1:
+          horas.after_cancel(reloj_time)
           messagebox.showinfo("Aviso"," Se acaba de desplegar el Top X")
+          bandera_activa_topx=0
      reloj_time=horas.after(1000,activa_reloj)
 
 def activa_timer():
@@ -209,7 +212,9 @@ def activa_timer():
           else:
                return activa_reloj()
      if bandera_activa_topx==1:
+          horas.after_cancel(reloj_time)
           messagebox.showinfo("Aviso"," Se acaba de desplegar el Top X")
+          bandera_activa_topx=0
      reloj_time=horas.after(1000,activa_timer)
 
 def terminar_juego_f():
@@ -278,6 +283,7 @@ def guardar_partida_f():
                               lista_elementos_fijos.append([indice,indice1])
           pickle.dump(lista_elementos_fijos,guarda)
           guarda.close()
+          messagebox.showinfo("Info"," Ya se ha guardado el juego")
      else:
           messagebox.showinfo("ERROR"," No se ha iniciado el juego")
 
@@ -320,19 +326,15 @@ def cargar_partida_f():
                     mn=lista_aux[2]
                     sg=lista_aux[3]
                partidas_top_x=lista_aux[5]
-               if lista_aux[6]==2:
-                    bandera_simbolos=1
-               elif lista_aux[6]==1:
-                    banadera_letras=1
-               else:
-                    bandera_numeros=1
+               messagebox.showinfo("Info"," Ya se ha cargado el juego")
      else:
           messagebox.showinfo("ERROR"," Ya se ha iniciado el juego")
 
 def activa_bandera_topx():
      global bandera_activa_topx
      bandera_activa_topx=1
-     ########otra llamadaaaaaaaaaaaaaaaaaaaaa
+     subprocess.Popen([path1],shell=True)
+     
      
 class Jugadas_hechas:
      def __init__(self,fila,columna,elemento):
@@ -679,6 +681,14 @@ def configurar_v():
           horas1.delete(0,"end")
           horas1.insert(0,"1")
      def activa_bandera_dificil():
+          """
+          Funcionalidad: Activa la bandera de nivel dificil para poder escoger la partida según lo solicitado.
+          Entradas: (bandera_nivel_facil) bandera que indica si es nivel es facil.
+                    (bandera_nivel_medio) bandera que indica si es nivel es intermedio.
+                    (bandera_nivel_dificil) bandera que indica si es nivel es dificil.
+          Restricciones: Ninguna.
+          Salidas: Limpia los entry para colocar en tiempo y modifica el valor de la bandera.
+          """
           global bandera_nivel_facil
           global bandera_nivel_medio
           global bandera_nivel_dificil
@@ -690,6 +700,14 @@ def configurar_v():
           horas1.delete(0,"end")
           horas1.insert(0,"2")
      def activa_elementos_numeros():
+          """
+          Funcionalidad: Activa la bandera de que los elementos a utilizar van a ser los números.
+          Entradas: (bandera_numeros) bandera que indica que los elementos que se van a ulizar son los números.
+                    (bandera_letras) bandera que indica que los elementos que se van a ulizar son las letras.
+                    (bandera_simbolos) bandera que indica que los elementos que se van a ulizar son los símbolos.
+          Restricciones: Ninguna.
+          Salidas: Modifica el valor de la bandera de elementos a utilizar a que se van a utilizar números.
+          """
           global bandera_numeros
           global bandera_letras
           global bandera_simbolos
@@ -697,6 +715,14 @@ def configurar_v():
           bandera_letras=0
           bandera_simbolos=0
      def activa_elementos_letras():
+          """
+          Funcionalidad: Activa la bandera de que los elementos a utilizar van a ser las letras.
+          Entradas: (bandera_numeros) bandera que indica que los elementos que se van a ulizar son los números.
+                    (bandera_letras) bandera que indica que los elementos que se van a ulizar son las letras.
+                    (bandera_simbolos) bandera que indica que los elementos que se van a ulizar son los símbolos.
+          Restricciones: Ninguna.
+          Salidas: Modifica el valor de la bandera de elementos a utilizar a que se van a utilizar letras.
+          """
           global bandera_numeros
           global bandera_letras
           global bandera_simbolos
@@ -704,6 +730,14 @@ def configurar_v():
           bandera_letras=1
           bandera_simbolos=0
      def activa_elementos_simbolos():
+          """
+          Funcionalidad: Activa la bandera de que los elementos a utilizar van a ser los símbolos.
+          Entradas: (bandera_numeros) bandera que indica que los elementos que se van a ulizar son los números.
+                    (bandera_letras) bandera que indica que los elementos que se van a ulizar son las letras.
+                    (bandera_simbolos) bandera que indica que los elementos que se van a ulizar son los símbolos.
+          Restricciones: Ninguna.
+          Salidas: Modifica el valor de la bandera de elementos a utilizar a que se van a utilizar simbolos.
+          """
           global bandera_numeros
           global bandera_letras
           global bandera_simbolos
@@ -773,6 +807,14 @@ def configurar_v():
      aceptar.grid(row=10,column=3)
      configura.mainloop()
 def borrar_juego_f():
+     """
+     Funcionalidad: Borra del tablero todas las jugadas que se hayan hecho y lo deja tal como en el comienzo.
+     Entradas: (elementos_fijos) elementos que son propios de la partida inicial.
+               (matriz_botones_2) matriz que guarda todas las jugadas hechas.
+               (bandera_inincio_juego) bandera para verificar que se haya iniciado el juego.
+     Restricciones: Ninguna.
+     Salidas: Borra todas las jugadas que se hayan hecho y dejael tablero como en el comienzo.
+     """
      global elementos_fijos
      global matriz_botones_2
      global bandera_inincio_juego
@@ -785,7 +827,33 @@ def borrar_juego_f():
                for indice1,boton in enumerate(lista):
                     if not boton[0] in elementos_fijos:
                          boton[0].config(text="")
+                         matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],""]
 def inicio_f():
+     """
+     Funcionalidad: Se encarga de hechar a andar el juego, extrae la partida que se va a usar, inicia el timer o el reloj,
+                    modifica los elementos que se van a utilizar en caso de ser necesrio.
+     Entradas: (partidas_faciles) donde están las partidas fáciles,                (partidas_medias) donde están las partidas intermedias.
+               (partidas_dificiles) donde están las partidas dificiles,            (bandera_nivel_facil) bandera que indica si el nivel es facil.
+               (bandera_nivel_medio) bandera que indica si el nivel es intermedio, (bandera_nivel_dificil) bandera que indica si el nivel es dificil.
+               (partida) la partida que se va a utilizar,                          (iniciar_juego) botón de inicio juego.       
+               (matriz_botones_2) matriz que va a tener la partida y cambios,      (tablero_g) tablero del juego.
+               (bandera_simbolos) bandera que indica que se van a usar simbolos,   (bandera_letras) bandera que indica que se van a usar letras.
+               (bandera_numeros) bandera que indica que se van a usar números,     (elementos_fijos) tiene los elementos propios de la partida.
+               (bandera_inicio_juego) bandera que indica el inicio del juego,      (horas) entry de horas.
+               (minutos) entry de minutos,                                         (segundos) entry de segundos.
+               (horas_1) get del entry de horas,                                   (minutos_1) get del entry de minutos.
+               (segundos_1) get del entry de segundos,                             (hr) horas para reloj.
+               (mn) minutos para reloj,                                            (sg) segundos para reloj.
+               (lista_aux) lista que contiene un juego guardado,                   (bandera_juego_guardado) bandera que indica si hay un juego guardado.
+               (nombre_j) entry del nombre del jugador,                            (elementos) frame donde está el tablero para rellenar las casillas.
+               (uno) primer botón del tablero para rellenar las casillas,          (dos) segundo botón del tablero para rellenar las casillas.
+               (tres) tercer botón del tablero para rellenar las casillas,         (cuarto) cuarto botón del tablero para rellenar las casillas.
+               (cinco) quinto botón del tablero para rellenar las casillas,        (seis) sexto botón del tablero para rellenar las casillas.
+               (siete) septimo botón del tablero para rellenar las casillas,       (ocho) octavo botón del tablero para rellenar las casillas.
+               (nueve) noveno botón del tablero para rellenar las casillas,        (texto) elementos que el usuario quiere utilizar en el juego.
+     Restricciones: Ninguna.
+     Salidas: Inicia el juego, con el timer o reloj, despliega todo en la ventana de juego.
+     """
      global partidas_faciles
      global partidas_medias
      global partidas_dificiles
@@ -798,6 +866,7 @@ def inicio_f():
      global tablero_g
      global bandera_simbolos
      global bandera_letras
+     global bandera_numeros
      global elementos_fijos
      global bandera_inicio_juego
      global horas
@@ -814,6 +883,18 @@ def inicio_f():
      global sg
      global lista_aux
      global bandera_juego_guardado
+     global nombre_j
+     global elementos
+     global uno
+     global dos
+     global tres
+     global cuatro
+     global cinco
+     global seis
+     global siete
+     global ocho
+     global nueve
+     global texto
      if bandera_timer==1:
           horas_get=horas.get()
           minutos_get=minutos.get()
@@ -898,6 +979,25 @@ def inicio_f():
                               matriz_botones_2[indice][indice1]=[matriz_botones_2[indice][indice1][0],partida[indice][indice1]]
                          elementos_fijos.append(matriz_botones_2[indice][indice1][0])
           if bandera_juego_guardado==1:
+               if lista_aux[6]==2:
+                    bandera_simbolos=1
+                    texto=elementos_simbolos
+               elif lista_aux[6]==1:
+                    banadera_letras=1
+                    texto=elementos_letras
+               else:
+                    bandera_numeros=1
+                    texto=elementos_numeros
+               uno.config(text=texto[0])
+               dos.config(text=texto[1])
+               tres.config(text=texto[2])
+               cuatro.config(text=texto[3])
+               cinco.config(text=texto[4])
+               seis.config(text=texto[5])
+               siete.config(text=texto[6])
+               ocho.config(text=texto[7])
+               nueve.config(text=texto[8])
+               nombre_j.insert(0,lista_aux[0])
                for indice,fila in enumerate(lista_aux[7]):
                     for indice1,boton in enumerate(fila):
                          matriz_botones_2[indice][indice1][0].config(text=boton[2])
@@ -916,6 +1016,17 @@ def inicio_f():
           else:
                iniciar_juego.config(state="disabled")
 def asigna_valor(x,y):
+     """
+     Funcionalidad: Asigna el valor a  cada una de las casillas del tablero.
+     Entradas: (matriz_botones) matriz que tiene la dirección de todos los botones, (matriz_botones_2) matriz que va a tener la partida y cambios.
+               (elemento_agregar) elemento que se seleccionó para una casilla,      (jugar_v) ventana del juego.
+               (gane) bandera que indica que hay un gane,                           (w) contador.
+               (bandera_boton_picado) indica que se picó un botón,                  (f) indice fila.
+               (c) indice columna,                                                  (pila_jugadas_hechas) tiene las jugadas hechas.
+               (lista_mismos) para validar,                                         (valor) elemento que se saca de otra jugada en una clase.
+     Restricciones: Ninguna.
+     Salidas: Se ve el cambio en la interfaz, y también el la matriz interna.
+     """
      global matriz_botones
      global matriz_botones_2
      global elemento_agregar
@@ -970,11 +1081,25 @@ def asigna_valor(x,y):
           cuadricula_8=[matriz_botones_2[6][3],matriz_botones_2[6][4],matriz_botones_2[6][5],matriz_botones_2[7][3],matriz_botones_2[7][4],matriz_botones_2[7][5],matriz_botones_2[8][3],matriz_botones_2[8][4],matriz_botones_2[8][5]]
           cuadricula_9=[matriz_botones_2[6][6],matriz_botones_2[6][7],matriz_botones_2[6][8],matriz_botones_2[7][6],matriz_botones_2[7][7],matriz_botones_2[7][8],matriz_botones_2[8][6],matriz_botones_2[8][7],matriz_botones_2[8][8]]
           def auxiliar_error(boton):
+               """
+               Funcionalidad: Valida que el elemento que se va a añadir no esté el la cuadrícula.
+               Entradas: (boton) el boton que se va a evaluar.
+                         (matriz_botones) matriz que contiene todos los botones deol tablero.
+               Restricciones: Ninguna.
+               Salidas: Una ventana con mensaje indicando que ese elemento está en la cuadrícula.
+               """
                global matriz_botones
                boton.config(bg="red")
                messagebox.showinfo("Error"," Jugada no es válida porque el \n elemento ya está en la cudrícula")
                boton.config(bg="lavender")
           def recorre_cuadricula(c):
+               """
+               Funcionalidad: Recorre la cuadrícula para ver si el elemento está en ella.
+               Entradas: (c) cuadricula.
+                         (w) contador.
+               Restricciones: Ninguna.
+               Salidas: En caso de que el elemento esté en la cuadrícula llama a otra función.
+               """
                global w
                for boton in c:
                     if boton[1]==str(elemento_agregar):
@@ -1027,7 +1152,32 @@ def asigna_valor(x,y):
 def jugar_f():
      """
      Funcionalidad: Crea la ventana donde se van a encontrar todos lo botones e interfaz nesesaria para poder jugar.
-     Entradas: Ninguna.
+     Entradas: (menu_p) ventana del menú principal,                                (nombre_j) entry del nombre del jugador.
+               (horas_1) get del entry de horas,                                   (minutos_1) get del entry de minutos.
+               (segundos_1) get del entry de segundos,                             (elementos_numeros) contiene los números a utilizar en el juego.
+               (elementos_letras) contiene las letras a utilizar en el juego,      (elementos_simbolos) contiene los símbolos a utilizar en el juego.
+               (bandera_numeros) bandera que indica que se van a usar números,     (bandera_letras) bandera que indica que se van a usar letras.
+               (bandera_simbolos) bandera que indica que se van a usar simbolos,   (partida) la partida que se va a utilizar.
+               (iniciar_juego) botón de inicio juego,                              (matriz_botones) matriz que tiene la dirección de todos los botones.
+               (matriz_botones_2) matriz que va a tener la partida y cambios,      (tablero_g) tablero del juego.
+               (horas) entry de horas,                                             (minutos) entry de minutos.
+               (segundos) entry de segundos,                                       (jugar_v) ventana del juego.
+               (gane) bandera que indica que hay un gane,                          (bandera_inicio_juego) bandera que indica el inicio del juego.
+               (elemento_agregar) elemento que se seleccionó para una casilla,     (hr) horas para reloj.
+               (mn) minutos para reloj,                                            (sg) segundos para reloj.
+               (ventana_para_timer) ventana en la que está el timer,               (bandera_timer) bandera que indica que se va a usar timer.
+               (bandera_reloj) bandera que indica que se va a usar reloj,          (elementos) frame donde está el tablero para rellenar las casillas.
+               (uno) primer botón del tablero para rellenar las casillas,          (dos) segundo botón del tablero para rellenar las casillas.
+               (tres) tercer botón del tablero para rellenar las casillas,         (cuarto) cuarto botón del tablero para rellenar las casillas.
+               (cinco) quinto botón del tablero para rellenar las casillas,        (seis) sexto botón del tablero para rellenar las casillas.
+               (siete) septimo botón del tablero para rellenar las casillas,       (ocho) octavo botón del tablero para rellenar las casillas.
+               (nueve) noveno botón del tablero para rellenar las casillas,        (texto) elementos que el usuario quiere utilizar en el juego.
+               (elementos_fijos) tiene los elementos propios de la partida,        (w) contador.
+               (bandera_modifica_timer) indica que se modificó el timer,           (partidas_para_deshacer) se guardan las jugadas hechas.
+               (f) indice fila,                                                    (c) indice columna.
+               (pila_jugadas_hechas) tiene las jugadas hechas,                     (pila_jugadas_eliminadas) tiene las jugadas que se deshacen.
+               (bandera_activa_topx) indica que se quiere top x,                   (lista_top_x) se guarda la última partida.
+               (partidas_top_x) contiene las partidas ganadas,                     (bandera_juego_guardado) bandera que indica si hay un juego guardado.
      Restricciones: Debe de ser accionada por la opción jugar en el menú.
      Salidas: Ventana de juego.
      """
@@ -1055,13 +1205,35 @@ def jugar_f():
      global gane
      global bandera_inicio_juego
      global elemento_agregar
-     global partida
      global hr
      global mn
      global sg
      global ventana_para_timer
      global bandera_timer
      global bandera_reloj
+     global elementos
+     global uno
+     global dos
+     global tres
+     global cuatro
+     global cinco
+     global seis
+     global siete
+     global ocho
+     global nueve
+     global texto
+     global elementos_fijos
+     global w
+     global bandera_modifica_timer
+     global partidas_para_deshacer
+     global f
+     global c
+     global pila_jugadas_hechas
+     global pila_jugadas_eliminadas
+     global bandera_activa_topx
+     global lista_top_x
+     global partidas_top_x
+     global bandera_juego_guardado
      if gane!=2:
           menu_p.destroy()
      if gane==2:
@@ -1076,6 +1248,15 @@ def jugar_f():
           sg=0
           w=0
           bandera_modifica_timer=0
+          partidas_para_deshacer=[]
+          f=0
+          c=0
+          pila_jugadas_hechas=[]
+          pila_jugadas_eliminadas=[]
+          bandera_activa_topx=0
+          lista_top_x=[]
+          partidas_top_x=0
+          bandera_juego_guardado=0
      jugar_v=tk.Tk()
      jugar_v.iconbitmap("x.ico")
      jugar_v.title("SUDOKU")
@@ -1115,6 +1296,15 @@ def jugar_f():
           matriz_botones.append(fila_botones)
      tablero_g.grid(row=3,column=2)
      def meter_elemento(numero,b):
+          """
+          Funcionalidad: Marca el elemento que se seleccionó y asigna su valor a una variable.
+          Entradas: (numero) elemento que se va a asignar.
+                    (b) botón.
+                    (elemento_agregar) variable que va a recibir la asignación.
+                    (bandera_boton_picado) guarda el valor del botón.
+          Restricciones: Ninguna.
+          Salidas: Asinga el elemento a una variable y en la interfaz se marca el elemento seleccionado.
+          """
           global elemento_agregar
           global bandera_boton_picado
           if bandera_boton_picado!=0:
@@ -1211,7 +1401,7 @@ def jugar_f():
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=1,column=0)
 
-     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10),command=lambda:subprocess.Popen([path1],shell=True))
+     top_x=tk.Button(elementos_para_tablero,text=" TOP \n X",bg="gold",height=2,font=("Arial Black",10),command=lambda:activa_bandera_topx())
      top_x.grid(row=2,column=0)
      none=tk.Label(elementos_para_tablero,text="  ",bg="AntiqueWhite1")
      none.grid(row=2,column=1)
@@ -1233,6 +1423,13 @@ def jugar_f():
 
 #MENÚ:
 def menu():
+     """
+     Funcionalidad: Despliega el menú principal.
+     Entradas: (menu_p) ventana de menú principal.
+               (path) pdf de ayuda.
+     Restricciones: Ninguna.
+     Salidas: Ventana con las opciones del menú.
+     """
      global menu_p
      global path
      menu_p=tk.Tk()
