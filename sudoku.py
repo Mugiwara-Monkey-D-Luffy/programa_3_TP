@@ -218,6 +218,15 @@ def activa_timer():
      reloj_time=horas.after(1000,activa_timer)
 
 def terminar_juego_f():
+     """
+     Funcionalidad: Termina la partida que esta en proceso.
+     Entradas:
+     -global gane
+     -global jugar_v
+     -global bandera_inicio_juego
+     Restricciones: Ninguna.
+     Salidas: Termina la partida en proceso.
+     """
      global gane
      global jugar_v
      global bandera_inicio_juego
@@ -231,6 +240,20 @@ def terminar_juego_f():
           jugar_f()
 
 def guardar_partida_f():
+     """
+     Funcionalidad: Guarda la última partida jugada.
+     Entradas:
+     (nom) nombre del jugador,                                           (horas_get) horas del timer. 
+     (minutos_get) minutos del timer,                                    (segundos_get) segundos del timer. 
+     (bandera_reloj) bandera que indica que se va a usar reloj,          (bandera_timer) bandera que indica que se va a usar timer.
+     (partidas_top_x) guarda las partidas ganadas,                       (hr) horas deel reloj.
+     (sg) segundos del reloj,                                            (mn) minutos del reloj.
+     (matriz_botones_2) matriz que va a tener la partida y cambios,      (bandera_numeros)bandera que indica que se van a usar números. 
+     (bandera_letras) bandera que indica que se van a usar letras,       (bandera_simbolos) bandera que indica que se van a usar simbolos.
+     (elementos_fijos) tiene los elementos propios de la partida,        (bandera_inicio_juego) bandera que indica el inicio del juego.
+     Restricciones: Ninguna.
+     Salidas: Guarda la última partida realizada.
+     """
      global nom
      global horas_get
      global minutos_get
@@ -288,6 +311,20 @@ def guardar_partida_f():
           messagebox.showinfo("ERROR"," No se ha iniciado el juego")
 
 def cargar_partida_f():
+     """
+     Funcionalidad: Permite acceder al último juego y cargarlo de manera que se puedan recuperar los valores de la partida anterior.
+     Entradas:
+     (nom) nombre del jugador,                                           (horas_get) horas del timer. 
+     (minutos_get) minutos del timer,                                    (segundos_get) segundos del timer. 
+     (bandera_reloj) bandera que indica que se va a usar reloj,          (bandera_timer) bandera que indica que se va a usar timer.
+     (partidas_top_x) guarda las partidas ganadas,                       (hr) horas deel reloj.
+     (sg) segundos del reloj,                                            (mn) minutos del reloj.
+     (matriz_botones_2) matriz que va a tener la partida y cambios,      (bandera_numeros)bandera que indica que se van a usar números. 
+     (bandera_letras) bandera que indica que se van a usar letras,       (bandera_simbolos) bandera que indica que se van a usar simbolos.
+     (elementos_fijos) tiene los elementos propios de la partida,        (bandera_inicio_juego) bandera que indica el inicio del juego.
+     Restricciones: Ninguna.
+     Salidas: Carga la partida que se almacenó de último para luego tener la posibilidad de seguir el juego.
+     """
      global nom
      global horas_get
      global minutos_get
@@ -331,6 +368,12 @@ def cargar_partida_f():
           messagebox.showinfo("ERROR"," Ya se ha iniciado el juego")
 
 def activa_bandera_topx():
+     """
+     Funcionalidad: Indica que se quiere desplegar el Top de las jugadas realizadas.
+     Entradas: (bandera_activa_topx) indica si se despliega o no el Top x. 
+     Restricciones: Ninguna.
+     Salidas: Indica si si se despliega el Top x.
+     """
      global bandera_activa_topx
      bandera_activa_topx=1
      subprocess.Popen([path1],shell=True)
@@ -338,6 +381,12 @@ def activa_bandera_topx():
      
 class Jugadas_hechas:
      def __init__(self,fila,columna,elemento):
+          """
+          Funcionalidad: Establece los atributos de las jugadas realizadas.
+          Entradas: self,fila,columna,elemento
+          Restriciiones: Ninguna.
+          Salidas: Retorna los atributos de las jugadas realizadas.
+          """
           self.fila=fila
           self.columna=columna
           self.elemento=elemento
@@ -349,6 +398,15 @@ class Jugadas_hechas:
           return self.elemento
 
 def deshacer_partida_f():
+     """
+     Funcionalidad: Deshacer las jugadas que se realizan dentro de la partida.
+     Entradas:
+     (pila_jugadas_eliminadas)tiene las jugadas que se deshacen,                (pila_jugadas_hechas)tiene las jugadas hechas.
+     (matriz_botones) matriz que tiene la dirección de todos los botones,       (matriz_botones_2)matriz que va a tener la partida y cambios.
+     (bandera_inicio_juego)bandera que indica el inicio del juego.
+     Restricciones: Ninguna.
+     Salidas: Deshace el movimiento mas recientemente hecho.
+     """
      global pila_jugadas_eliminadas
      global pila_jugadas_hechas
      global matriz_botones
@@ -389,6 +447,12 @@ def deshacer_partida_f():
 
 class Jugadas_eliminadas:
      def __init__(self, fila, columna, elemento):
+          """
+          Funcionalidad: Establece los atributos de las jugadas realizadas.
+          Entradas: self, fila, columna, elemento
+          Restricciones: Ninguna.
+          Sali
+          """
           self.fila=fila
           self.columna=columna
           self.elemento=elemento
@@ -401,6 +465,14 @@ class Jugadas_eliminadas:
      def obtiene_valor(self):
           return self.elemento
 def rehacer_partida_f():
+     """
+     Funcionalidad: Rehacer las jugadas que se realizan dentro de la partida.
+     Entradas: 
+     (matriz_botones)matriz que tiene la dirección de todos los botones,        (matriz_botones_2) matriz que va a tener la partida y cambios.
+     (pila_jugadas_eliminadas) tiene las jugadas que se deshacen,               (bandera_inicio_juego)bandera que indica el inicio del juego.
+     Restricciones: Ninguna.
+     Salidas: Rehace el movimiento mas recientemente hecho.
+     """
      global matriz_botones
      global matriz_botones_2
      global pila_jugadas_eliminadas
@@ -424,6 +496,12 @@ def rehacer_partida_f():
 
 class Mejores_jugadores:
      def __init__(self,nombre,horas,minutos,segundos,nivel):
+          """
+          Funcionalidad: Establece los atributos que corresponden a los mejores jugadores.
+          Entradas: self,nombre,horas,minutos,segundos,nivel.
+          Restricciones: Ninguna.
+          Salidas: Retorna los atributos de los mejores jugadores.
+          """
           self.nombre=nombre
           self.horas=horas
           self.minutos=minutos
@@ -443,6 +521,19 @@ class Mejores_jugadores:
           return self.nombre,self.horas,self.minutos,self.segundos,self.nivel
 
 def crea_topx():
+     """
+     Funcionalidad: Crear el top x  de los mejores records del Sudoku dependiendo de sus subdivisiones, las cuales serían fácil, intermedio y difícil.
+     Entradas:
+     (nom) nombre del jugador,                                               (horas_get) horas del timer.
+     (minutos_get) minutos del timer,                                        (segundos_get) segundos del timer.
+     (bandera_nivel_facil) bandera que indica si el nivel es facil,          (bandera_nivel_medio) bandera que indica si el nivel es intermedio.
+     (bandera_nivel_dificil) bandera que indica si el nivel es dificil,      (bandera_reloj) bandera que indica que se va a usar reloj.
+     (bandera_timer) bandera que indica que se va a usar timer,              (lista_top_x) se guarda la última partida.
+     (partidas_top_x) contiene las partidas ganadas,                         (hr) horas para reloj.
+     (sg) segundos para reloj.                                               (mn) minutos para reloj.
+     Restricciones: Ninguna.
+     Salidas: Crea el top x del Sudoku con sus respectivas subdivisiones, las cuales serían fácil, intermedio y difícil.
+     """
      global nom
      global horas_get
      global minutos_get
@@ -549,7 +640,16 @@ def crea_topx():
 def configurar_v():
      """
      Funcionalidad: Despliega la ventana para hacer la configuarción.
-     Entradas: Ninguna.
+     Entradas:
+     (bandera_reloj) bandera que indica que se va a usar reloj,              (bandera_timer) bandera que indica que se va a usar timer.
+     (segundos1)variable que guarda parcialmente las segundos,               (minutos1).
+     (horas1) variable que guarda parcialmente las horas,                    (horas_1) get del entry de horas. 
+     (minutos_1) get del entry de minutos,                                   (segundos_1) get del entry de segundos.
+     (bandera_nivel_facil) bandera que indica si el nivel es facil,          (bandera_nivel_medio) bandera que indica si el nivel es intermedio.
+     (bandera_nivel_dificil) bandera que indica si el nivel es dificil,      (bandera_top_x),guarda parcialmente las partidas ganadas,
+     (partidas_topx) Get de partidaa_top_x,                                  (bandera_numeros) bandera que indica que se van a usar números.
+     (bandera_letras) bandera que indica que se van a usar letras,           (bandera_simbolos) bandera que indica que se van a usar simbolos.
+     (bandera_pasa_configuracion),                                           (partidas_top_x) Entry para top x.
      Restricciones: Los datos del timer tienen que ser correctos.
      Salidas: Ventana para hacer la confirmación.
      """
@@ -581,9 +681,10 @@ def configurar_v():
      def activa_bandera_reloj():
           """
           Funcionalidad: Activa una bandera para que en la ventan de juego salga el reloj.
-          Entradas: Ninguna.
-          Restricciones: Ninguna.
-          Salidas: Ninguna. 
+          Entradas: (bandera_reloj)bandera que indica que se va a usar reloj,
+                    (bandera_timer)bandera que indica que se va a usar timer.
+          Restricciones:  Ninguna. 
+          Salidas:  Ninguna. 
           """
           global bandera_reloj
           global bandera_timer
@@ -592,9 +693,10 @@ def configurar_v():
      def desactiva_bandera_reloj():
           """
           Funcionalidad: Desactiva una bandera para que en la ventan de juego salga el reloj.
-          Entradas: Ninguna.
-          Restricciones: Ninguna.
-          Salidas: Ninguna.
+          Entradas: (bandera_reloj)bandera que indica que se va a usar reloj,
+                    (bandera_timer)bandera que indica que se va a usar timer.
+          Restricciones:  Ninguna. 
+          Salidas:  Ninguna. 
           """
           global bandera_reloj
           global bandera_timer
@@ -603,15 +705,27 @@ def configurar_v():
      def activa_bandera_timer():
           """
           Funcionalidad: Activa una bandera para que en la ventan de juego salga el timer.
-          Entradas: Ninguna.
-          Restricciones: Ninguna.
-          Salidas: Ninguna.
+          Entradas: (bandera_reloj)bandera que indica que se va a usar reloj,
+                    (bandera_timer)bandera que indica que se va a usar timer.
+          Restricciones:  Ninguna. 
+          Salidas:  Ninguna. 
           """
           global bandera_reloj
           global bandera_timer
           bandera_reloj=0
           bandera_timer=1
      def validaciones_configuracion():
+          """
+          Funcionalidad: Validar que los datos ingresados por el usuario en la secci[on del timer sean válidos.
+          Entradas:
+          (bandera_timer) bandera que indica que se va a usar timer,                              (horas1) variable que guarda parcialmente las horas.
+          (minutos1) variable que guarda parcialmente las minutos,                                (segundos1) variable que guarda parcialmente las segundos.
+          (horas_1) get del entry de horas,                                                       (minutos_1) get del entry de minutos.
+          (segundos_1) get del entry de segundos,                                                 (partidas_topx) Get de partidaa_top_x.
+          (bandera_pasa_configuracion) bandera que indica si la configuración esta completa,      (partidas_top_x) contiene las partidas ganadas.
+          Restricciones: Ninguna.
+          Salidas: Genera una ventana cn el error que corresponde.
+          """
           global bandera_timer
           global horas1
           global minutos1
@@ -659,6 +773,14 @@ def configurar_v():
                #open("sudoku2021configuración.dat")
                configura.destroy()
      def activa_bandera_facil():
+          """
+          Funcionalidad: Activa la bandera de nivel fácil para poder escoger la partida según lo solicitado.
+          Entradas:(bandera_nivel_facil) bandera que indica si es nivel es facil.
+                   (bandera_nivel_medio) bandera que indica si es nivel es intermedio.
+                   (bandera_nivel_dificil) bandera que indica si es nivel es dificil
+          Restricciones: Ninguna.
+          Salidas: Limpia los entry para colocar en tiempo y modifica el valor de la bandera.
+          """
           global bandera_nivel_facil
           global bandera_nivel_medio
           global bandera_nivel_dificil
@@ -670,6 +792,14 @@ def configurar_v():
           horas1.delete(0,"end")
           minutos1.insert(0,"30")
      def activa_bandera_medio():
+          """
+          Funcionalidad: Activa la bandera de nivel medio para poder escoger la partida según lo solicitado. 
+          Entradas:(bandera_nivel_facil) bandera que indica si es nivel es facil.
+                   (bandera_nivel_medio) bandera que indica si es nivel es intermedio.
+                   (bandera_nivel_dificil) bandera que indica si es nivel es dificil
+          Restricciones:
+          Salidas: Limpia los entry para colocar en tiempo y modifica el valor de la bandera.
+          """
           global bandera_nivel_facil
           global bandera_nivel_medio
           global bandera_nivel_dificil
