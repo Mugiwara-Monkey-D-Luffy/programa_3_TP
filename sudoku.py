@@ -1169,6 +1169,11 @@ def asigna_valor(x,y):
      global pila_jugadas_hechas
      global lista_mismos
      global valor
+     global bandera_timer
+     global bandera_reloj
+     global horas
+     global reloj_time
+
      bandera_validacion=0
      if matriz_botones[x][y] in elementos_fijos:
           bandera_validacion=1
@@ -1271,6 +1276,7 @@ def asigna_valor(x,y):
                                    gane=0
                     if gane==1:
                          gane=2
+                         horas.after_cancel(reloj_time)
                          messagebox.showinfo("Gane"," ¡EXELENTE! \n JUEGO COMPLETADO")
                          crea_topx()
                          jugar_v.destroy()
